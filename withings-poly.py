@@ -11,7 +11,7 @@ from flask import Flask
 from flask import Response
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
-
+from withings import Withings
 
 LOGGER = polyinterface.LOGGER
 
@@ -19,9 +19,10 @@ LOGGER = polyinterface.LOGGER
 class Controller(polyinterface.Controller):
     def __init__(self, polyglot):
         super(Controller, self).__init__(polyglot)
-        self.name = 'Template Controller'
+        self.name = 'Withings Controller'
         self.poly.onConfig(self.process_config)
         self.server_data = {}
+        self.access_token = None
 
     def start(self):
         # This grabs the server.json data and checks profile_version is up to date
@@ -45,7 +46,12 @@ class Controller(polyinterface.Controller):
         # cb_server.setDaemon(True)
         # cb_server.start()
         if self.get_credentials():
-            self.auth_prompt()
+            if self.refresh_token():
+                self.discover()
+            else:
+                self.auth_prompt()
+        else:
+            LOGGER.error("Credentials for OAuth are not available")
 
     # def flask_server(self):
     #     print("-----------------------------------")
@@ -165,8 +171,9 @@ class Controller(polyinterface.Controller):
                                  }
 
                     self.saveCustomData(cust_data)
+                    self.access_token = access_token
                     self.remove_notices_all()
-                    print(cust_data)
+                    # print(cust_data)
                     return True
                 except KeyError as ex:
                     LOGGER.error("get_token Error: " + str(ex))
@@ -176,49 +183,94 @@ class Controller(polyinterface.Controller):
             LOGGER.error("Error: " + str(e))
 
     def refresh_token(self):
-        """
-        Optional.
-        Code for processing any token refresh from an OAuth workflow
-        :return:
-        """
-        pass
+        if 'refresh_token' in self.polyConfig['customData']:
+            _token_url = "https://account.withings.com/oauth2/token"
+
+            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+
+            payload = {"grant_type": "refresh_token",
+                       "client_id": self.server_data['clientId'],
+                       "client_secret": self.server_data['clientSecret'],
+                       "refresh_token": self.polyConfig['customData']['refresh_token']
+                       }
+
+            try:
+                r = requests.post(_token_url, headers=headers, data=payload)
+                if r.status_code == requests.codes.ok:
+                    try:
+                        resp = r.json()
+                        print(resp)
+                        access_token = resp['access_token']
+                        refresh_token = resp['refresh_token']
+                        expires_in = resp['expires_in']
+                        user_id = resp['userid']
+
+                        cust_data = {'access_token': access_token,
+                                     'refresh_token': refresh_token,
+                                     'expires_in': expires_in,
+                                     'user_id': user_id
+                                     }
+
+                        self.saveCustomData(cust_data)
+                        self.access_token = access_token
+                        return True
+                    except KeyError as ex:
+                        LOGGER.error("get_token Error: " + str(ex))
+                else:
+                    return False
+            except requests.exceptions.RequestException as e:
+                LOGGER.error("Error: " + str(e))
+        else:
+            return False
 
     def shortPoll(self):
-        """
-        Optional.
-        This runs every 10 seconds. You would probably update your nodes either here
-        or longPoll. No need to Super this method the parent version does nothing.
-        The timer can be overriden in the server.json.
-        """
         LOGGER.debug('shortPoll')
 
     def longPoll(self):
-        """
-        Optional.
-        This runs every 30 seconds. You would probably update your nodes either here
-        or shortPoll. No need to Super this method the parent version does nothing.
-        The timer can be overriden in the server.json.
-        """
         LOGGER.debug('longPoll')
 
     def query(self, command=None):
-        """
-        Optional.
-        By default a query to the control node reports the FULL driver set for ALL
-        nodes back to ISY. If you override this method you will need to Super or
-        issue a reportDrivers() to each node manually.
-        """
         self.check_params()
         for node in self.nodes:
             self.nodes[node].reportDrivers()
 
     def discover(self, *args, **kwargs):
-        """
-        Example
-        Do discovery here. Does not have to be called discovery. Called from example
-        controller start method and from DISCOVER command recieved from ISY as an exmaple.
-        """
-        self.addNode(TemplateNode(self, self.address, 'templateaddr', 'Template Node Name'))
+        # self.addNode(TemplateNode(self, self.address, 'templateaddr', 'Template Node Name'))
+        if 'access_token' in self.polyConfig['customData']:
+            if self.polyConfig['customData']['access_token'] == self.access_token:
+                access_token = self.polyConfig['customData']['access_token']
+            else:
+                access_token = self.access_token
+
+            withings = Withings(access_token)
+
+            devices = withings.get_devices()
+            print(devices)
+            if devices is not None:
+                for dev in devices['body']['devices']:
+                    print(dev['type'])
+                    print(dev['battery'])
+                    print(dev['deviceid'])
+                    name = dev['type']
+                    naddr = dev['deviceid'][-12:].lower()
+                    print(name)
+                    print(naddr)
+                    self.addNode(WithingsDeviceNode(self, self.address, naddr, name))
+            else:
+                print(devices)
+
+            # activities map
+            activities_map = [
+                                {"steps", "Steps"},
+                                {"distance", "Distance in Steps"},
+                                {"elevation", "Elevation"},
+                                {"soft", "Light Activity"},
+                                {"moderate", "Moderate Activity"},
+                                {"intense", "Intense Activity"},
+                                {"active", "Active Activity"},
+                                {"calories", "Activity Calories Used"},
+                                {"totalcalories", "Total Calories Used"}
+                                ]
 
     def delete(self):
         """
@@ -287,16 +339,6 @@ class Controller(polyinterface.Controller):
         st = self.poly.installprofile()
         return st
 
-    """
-    Optional.
-    Since the controller is the parent node in ISY, it will actual show up as a node.
-    So it needs to know the drivers and what id it will use. The drivers are
-    the defaults in the parent Class, so you don't need them unless you want to add to
-    them. The ST and GV1 variables are for reporting status through Polyglot to ISY,
-    DO NOT remove them. UOM 2 is boolean.
-    The id must match the nodeDef id="controller"
-    In the nodedefs.xml
-    """
     id = 'controller'
     commands = {
         'QUERY': query,
@@ -309,46 +351,11 @@ class Controller(polyinterface.Controller):
 
 
 class TemplateNode(polyinterface.Node):
-    """
-    This is the class that all the Nodes will be represented by. You will add this to
-    Polyglot/ISY with the controller.addNode method.
-
-    Class Variables:
-    self.primary: String address of the Controller node.
-    self.parent: Easy access to the Controller Class from the node itself.
-    self.address: String address of this Node 14 character limit. (ISY limitation)
-    self.added: Boolean Confirmed added to ISY
-
-    Class Methods:
-    start(): This method is called once polyglot confirms the node is added to ISY.
-    setDriver('ST', 1, report = True, force = False):
-        This sets the driver 'ST' to 1. If report is False we do not report it to
-        Polyglot/ISY. If force is True, we send a report even if the value hasn't changed.
-    reportDrivers(): Forces a full update of all drivers to Polyglot/ISY.
-    query(): Called when ISY sends a query request to Polyglot for this specific node
-    """
-
     def __init__(self, controller, primary, address, name):
-        """
-        Optional.
-        Super runs all the parent class necessities. You do NOT have
-        to override the __init__ method, but if you do, you MUST call super.
-
-        :param controller: Reference to the Controller class
-        :param primary: Controller address
-        :param address: This nodes address
-        :param name: This nodes name
-        """
         super(TemplateNode, self).__init__(controller, primary, address, name)
 
     def start(self):
-        """
-        Optional.
-        This method is run once the Node is successfully added to the ISY
-        and we get a return result from Polyglot. Only happens once.
-        """
         self.setDriver('ST', 1)
-        pass
 
     def shortPoll(self):
         LOGGER.debug('shortPoll')
@@ -357,51 +364,60 @@ class TemplateNode(polyinterface.Node):
         LOGGER.debug('longPoll')
 
     def setOn(self, command):
-        """
-        Example command received from ISY.
-        Set DON on TemplateNode.
-        Sets the ST (status) driver to 1 or 'True'
-        """
         self.setDriver('ST', 1)
 
     def setOff(self, command):
-        """
-        Example command received from ISY.
-        Set DOF on TemplateNode
-        Sets the ST (status) driver to 0 or 'False'
-        """
         self.setDriver('ST', 0)
 
     def query(self, command=None):
-        """
-        Called by ISY to report all drivers for this node. This is done in
-        the parent class, so you don't need to override this method unless
-        there is a need.
-        """
         self.reportDrivers()
 
     "Hints See: https://github.com/UniversalDevicesInc/hints"
     hint = [1, 2, 3, 4]
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
-    """
-    Optional.
-    This is an array of dictionary items containing the variable names(drivers)
-    values and uoms(units of measure) from ISY. This is how ISY knows what kind
-    of variable to display. Check the UOM's in the WSDK for a complete list.
-    UOM 2 is boolean so the ISY will display 'True/False'
-    """
+
     id = 'templatenodeid'
-    """
-    id of the node from the nodedefs.xml that is in the profile.zip. This tells
-    the ISY what fields and commands this node has.
-    """
+
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
+
     commands = {
         'DON': setOn, 'DOF': setOff
     }
-    """
-    This is a dictionary of commands. If ISY sends a command to the NodeServer,
-    this tells it which method to call. DON calls setOn, etc.
-    """
+
+
+class WithingsDeviceNode(polyinterface.Node):
+    def __init__(self, controller, primary, address, name):
+        super(WithingsDeviceNode, self).__init__(controller, primary, address, name)
+
+    def start(self):
+        self.setDriver('ST', 1)
+
+    def shortPoll(self):
+        LOGGER.debug('shortPoll')
+
+    def longPoll(self):
+        LOGGER.debug('longPoll')
+
+    def setOn(self, command):
+        self.setDriver('ST', 1)
+
+    def setOff(self, command):
+        self.setDriver('ST', 0)
+
+    def query(self, command=None):
+        self.reportDrivers()
+
+    "Hints See: https://github.com/UniversalDevicesInc/hints"
+    hint = [1, 2, 3, 4]
+
+    id = 'WITHINGS_NODE'
+
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2},
+               {'driver': 'BATLVL', 'value': 0, 'uom': 2}
+               ]
+
+    commands = {
+        'DON': setOn, 'DOF': setOff
+    }
 
 #
 # class CallBackServer:
@@ -457,7 +473,7 @@ class CallBackServer(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     try:
-        polyglot = polyinterface.Interface('Template')
+        polyglot = polyinterface.Interface('Withings')
         polyglot.start()
         control = Controller(polyglot)
         control.runForever()

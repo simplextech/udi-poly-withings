@@ -10,3 +10,7 @@ ST-ctl-ST-NAME = NodeServer Online
 # mynodetype
 ND-tmplnode-NAME = Template Node
 ST-tmplnode-ST-NAME = Node Status
+
+# WITHINGS_NODE
+ND-WITHINGS_NODE-NAME = Withings Device
+ST-WITHINGS_NODE-ST-NAME = Node Status

@@ -17,11 +17,28 @@
             </accepts>
         </cmds>
     </nodeDef>
+
 	<!-- templatenodeid -->
     <nodeDef id="templatenodeid" nls="tmplnode">
         <editors />
         <sts>
             <st id="ST" editor="bool" />
+        </sts>
+        <cmds>
+            <sends />
+            <accepts>
+                <cmd id="DON" />
+                <cmd id="DOF" />
+            </accepts>
+        </cmds>
+    </nodeDef>
+
+    <!-- WITHINGS_NODE -->
+    <nodeDef id="WITHINGS_NODE" nls="WITHINGS_NODE">
+        <editors />
+        <sts>
+            <st id="ST" editor="bool" />
+            <st id="BATLVL" editor="bool" />
         </sts>
         <cmds>
             <sends />
