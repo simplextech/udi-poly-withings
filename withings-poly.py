@@ -13,18 +13,10 @@ import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from withings import Withings
 import copy
+from nodes import WithingsParentNode
+from nodes import WithingsDeviceNode
 
 LOGGER = polyinterface.LOGGER
-
-
-def meters_to_feet(meters):
-    ft = round((meters / 1000) * 3.2808, 1)
-    return ft
-
-
-def kilogram_to_pound(kilogram):
-    lb = round((kilogram / 1000) * 2.2046, 2)
-    return lb
 
 
 class Controller(polyinterface.Controller):
@@ -297,7 +289,6 @@ class Controller(polyinterface.Controller):
         custom_data = self.polyConfig['customData']
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
-            # print("Access Token: " + access_token)
             withings = Withings(access_token)
 
             devices = withings.get_devices()
@@ -308,8 +299,8 @@ class Controller(polyinterface.Controller):
                 time.sleep(1)
 
             # Create User ID Parent Nodes
-            parent_address = str(user_id)[-3:]
-            self.addNode(UserParentNode(self, parent_address, parent_address, "Withings User " + str(user_id)))
+            parent_address = str(user_id)[-3:] + "_"
+            self.addNode(WithingsParentNode(self, parent_address, parent_address, "Withings User " + str(user_id)))
             time.sleep(1)
 
             # Create Measurement Nodes
@@ -323,7 +314,7 @@ class Controller(polyinterface.Controller):
                         self.addNode(MeasureNode(self, parent_address, node_address, type_label))
                         time.sleep(2)
                     else:
-                        print("Type Label Not Found")
+                        LOGGER.info("Measure Type Not Found")
 
             # Create Activity Nodes
             activities = withings.get_activities()
@@ -334,6 +325,8 @@ class Controller(polyinterface.Controller):
                         node_address = parent_address + str(act).replace('_', '')[:8].lower()
                         self.addNode(MeasureNode(self, parent_address, node_address, act_label))
                         time.sleep(2)
+                    else:
+                        LOGGER.info("Activity Not Found")
 
     def delete(self):
         """
@@ -447,74 +440,74 @@ class TemplateNode(polyinterface.Node):
     }
 
 
-class WithingsDeviceNode(polyinterface.Node):
-    def __init__(self, controller, primary, address, name):
-        super(WithingsDeviceNode, self).__init__(controller, primary, address, name)
+# class WithingsDeviceNode(polyinterface.Node):
+#     def __init__(self, controller, primary, address, name):
+#         super(WithingsDeviceNode, self).__init__(controller, primary, address, name)
+#
+#     def start(self):
+#         self.setDriver('ST', 1)
+#
+#     def shortPoll(self):
+#         LOGGER.debug('shortPoll')
+#
+#     def longPoll(self):
+#         LOGGER.debug('longPoll')
+#
+#     def setOn(self, command):
+#         self.setDriver('ST', 1)
+#
+#     def setOff(self, command):
+#         self.setDriver('ST', 0)
+#
+#     def query(self, command=None):
+#         self.reportDrivers()
+#
+#     # "Hints See: https://github.com/UniversalDevicesInc/hints"
+#     # hint = [1, 2, 3, 4]
+#
+#     id = 'WITHINGS_NODE'
+#
+#     drivers = [{'driver': 'ST', 'value': 0, 'uom': 2},
+#                {'driver': 'BATLVL', 'value': 0, 'uom': 2}
+#                ]
+#
+#     commands = {
+#         'DON': setOn, 'DOF': setOff
+#     }
 
-    def start(self):
-        self.setDriver('ST', 1)
 
-    def shortPoll(self):
-        LOGGER.debug('shortPoll')
-
-    def longPoll(self):
-        LOGGER.debug('longPoll')
-
-    def setOn(self, command):
-        self.setDriver('ST', 1)
-
-    def setOff(self, command):
-        self.setDriver('ST', 0)
-
-    def query(self, command=None):
-        self.reportDrivers()
-
-    # "Hints See: https://github.com/UniversalDevicesInc/hints"
-    # hint = [1, 2, 3, 4]
-
-    id = 'WITHINGS_NODE'
-
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2},
-               {'driver': 'BATLVL', 'value': 0, 'uom': 2}
-               ]
-
-    commands = {
-        'DON': setOn, 'DOF': setOff
-    }
-
-
-class UserParentNode(polyinterface.Node):
-    def __init__(self, controller, primary, address, name):
-        super(UserParentNode, self).__init__(controller, primary, address, name)
-
-    def start(self):
-        self.setDriver('ST', 1)
-
-    def shortPoll(self):
-        LOGGER.debug('shortPoll')
-
-    def longPoll(self):
-        LOGGER.debug('longPoll')
-
-    def setOn(self, command):
-        self.setDriver('ST', 1)
-
-    def setOff(self, command):
-        self.setDriver('ST', 0)
-
-    def query(self, command=None):
-        self.reportDrivers()
-
-    # "Hints See: https://github.com/UniversalDevicesInc/hints"
-    # hint = [1, 2, 3, 4]
-
-    id = 'PARENT_NODE'
-
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
-
-    commands = {
-        'DON': setOn, 'DOF': setOff
-    }
+# class UserParentNode(polyinterface.Node):
+#     def __init__(self, controller, primary, address, name):
+#         super(UserParentNode, self).__init__(controller, primary, address, name)
+#
+#     def start(self):
+#         self.setDriver('ST', 1)
+#
+#     def shortPoll(self):
+#         LOGGER.debug('shortPoll')
+#
+#     def longPoll(self):
+#         LOGGER.debug('longPoll')
+#
+#     def setOn(self, command):
+#         self.setDriver('ST', 1)
+#
+#     def setOff(self, command):
+#         self.setDriver('ST', 0)
+#
+#     def query(self, command=None):
+#         self.reportDrivers()
+#
+#     # "Hints See: https://github.com/UniversalDevicesInc/hints"
+#     # hint = [1, 2, 3, 4]
+#
+#     id = 'PARENT_NODE'
+#
+#     drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
+#
+#     commands = {
+#         'DON': setOn, 'DOF': setOff
+#     }
 
 
 class MeasureNode(polyinterface.Node):
