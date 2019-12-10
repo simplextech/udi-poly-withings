@@ -49,8 +49,32 @@
         </cmds>
     </nodeDef>
 
-    <!-- USER_PARENT_NODE -->
-    <nodeDef id="USER_PARENT_NODE" nls="USER_PARENT_NODE">
+    <!-- PARENT_NODE -->
+    <nodeDef id="PARENT_NODE" nls="PARENT_NODE">
+        <editors />
+        <sts>
+            <st id="ST" editor="bool" />
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
+
+    <!-- MEASURE_NODE -->
+    <nodeDef id="MEASURE_NODE" nls="MEASURE_NODE">
+        <editors />
+        <sts>
+            <st id="ST" editor="bool" />
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
+
+    <!-- ACTIVITY_NODE -->
+    <nodeDef id="ACTIVITY_NODE" nls="ACTIVITY_NODE">
         <editors />
         <sts>
             <st id="ST" editor="bool" />

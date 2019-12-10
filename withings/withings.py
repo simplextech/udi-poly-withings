@@ -22,7 +22,6 @@ def get_request(url, headers, payload):
         r = requests.post(url, headers=headers, data=payload)
         if r.status_code == requests.codes.ok:
             resp = r.json()
-            print(resp)
             return resp
         else:
             LOGGER.error("Withings.get_request:  " + r.json())
@@ -61,3 +60,15 @@ class Withings:
             LOGGER.error("Withings.get_measure is None")
             return None
 
+    def get_activities(self):
+        url = "https://wbsapi.withings.net/v2/measure"
+        payload = {"action": "getactivity", "lastupdate": last_update(),
+                   "data_fields": "steps,distance,elevation,soft,moderate,intense,active,calories,"
+                                  "totalcalories,hr_average,hr_min,hr_max,hr_zone_0,hr_zone_1,hr_zone_2,hr_zone_3"}
+
+        resp = get_request(url, self.headers, payload)
+        if resp is not None:
+            return resp
+        else:
+            LOGGER.error("Withings.get_measure is None")
+            return None
