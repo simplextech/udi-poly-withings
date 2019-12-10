@@ -12,6 +12,7 @@ from flask import Response
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from withings import Withings
+import copy
 
 LOGGER = polyinterface.LOGGER
 
@@ -23,6 +24,7 @@ class Controller(polyinterface.Controller):
         self.poly.onConfig(self.process_config)
         self.server_data = {}
         self.access_token = None
+        self.user_info = {}
 
     def start(self):
         # This grabs the server.json data and checks profile_version is up to date
@@ -46,6 +48,7 @@ class Controller(polyinterface.Controller):
         # cb_server.setDaemon(True)
         # cb_server.start()
         if self.get_credentials():
+            self.auth_prompt()
             if self.refresh_token():
                 self.discover()
             else:
@@ -153,27 +156,32 @@ class Controller(polyinterface.Controller):
                    "client_secret": self.server_data['clientSecret'],
                    "redirect_uri": self.server_data['url']}
 
+        # print("Get Token Begin----------------------------------")
+        custom_data = copy.deepcopy(self.polyConfig['customData'])
+        # print(custom_data)
+        # print("Get Token Begin----------------------------------")
+
         try:
             r = requests.post(_token_url, headers=headers, data=payload)
             if r.status_code == requests.codes.ok:
                 try:
                     resp = r.json()
-                    print(resp)
                     access_token = resp['access_token']
                     refresh_token = resp['refresh_token']
                     expires_in = resp['expires_in']
                     user_id = resp['userid']
 
-                    cust_data = {'access_token': access_token,
-                                 'refresh_token': refresh_token,
-                                 'expires_in': expires_in,
-                                 'user_id': user_id
-                                 }
+                    # print("------------ NEW USER: " + str(user_id) + " ----------------")
+                    custom_data[user_id] = {'access_token': access_token,
+                                            'refresh_token': refresh_token,
+                                            'expires_in': expires_in}
 
-                    self.saveCustomData(cust_data)
-                    self.access_token = access_token
-                    self.remove_notices_all()
-                    # print(cust_data)
+                    # print("Get Token End----------------------------------")
+                    # print(custom_data)
+                    # print("Get Token End----------------------------------")
+
+                    self.saveCustomData(custom_data)
+
                     return True
                 except KeyError as ex:
                     LOGGER.error("get_token Error: " + str(ex))
@@ -183,43 +191,46 @@ class Controller(polyinterface.Controller):
             LOGGER.error("Error: " + str(e))
 
     def refresh_token(self):
-        if 'refresh_token' in self.polyConfig['customData']:
-            _token_url = "https://account.withings.com/oauth2/token"
+        _state = None
+        _token_url = "https://account.withings.com/oauth2/token"
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
-            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        custom_data = copy.deepcopy(self.polyConfig['customData'])
+        # print("---------------------------- refresh_token ----------------------------")
 
+        for user_id in custom_data.keys():
+            # print("----refresh token-------- USER: " + str(user_id) + " ----------------")
             payload = {"grant_type": "refresh_token",
                        "client_id": self.server_data['clientId'],
                        "client_secret": self.server_data['clientSecret'],
-                       "refresh_token": self.polyConfig['customData']['refresh_token']
+                       "refresh_token": custom_data[user_id]['refresh_token']
                        }
-
+            # print("---refresh token ----- " + custom_data[user_id]['refresh_token'])
             try:
                 r = requests.post(_token_url, headers=headers, data=payload)
                 if r.status_code == requests.codes.ok:
-                    try:
-                        resp = r.json()
-                        print(resp)
-                        access_token = resp['access_token']
-                        refresh_token = resp['refresh_token']
-                        expires_in = resp['expires_in']
-                        user_id = resp['userid']
+                    resp = r.json()
+                    access_token = resp['access_token']
+                    refresh_token = resp['refresh_token']
+                    expires_in = resp['expires_in']
+                    # user_id = resp['userid']
 
-                        cust_data = {'access_token': access_token,
-                                     'refresh_token': refresh_token,
-                                     'expires_in': expires_in,
-                                     'user_id': user_id
-                                     }
+                    custom_data[user_id] = {'access_token': access_token,
+                                            'refresh_token': refresh_token,
+                                            'expires_in': expires_in}
 
-                        self.saveCustomData(cust_data)
-                        self.access_token = access_token
-                        return True
-                    except KeyError as ex:
-                        LOGGER.error("get_token Error: " + str(ex))
+                    _state = True
                 else:
-                    return False
+                    _state = False
             except requests.exceptions.RequestException as e:
                 LOGGER.error("Error: " + str(e))
+
+        if _state:
+            # print("---------------refresh  New Custom Data -----------------------")
+            # print(custom_data)
+            self.saveCustomData(custom_data)
+            time.sleep(3)
+            return True
         else:
             return False
 
@@ -235,42 +246,83 @@ class Controller(polyinterface.Controller):
             self.nodes[node].reportDrivers()
 
     def discover(self, *args, **kwargs):
-        # self.addNode(TemplateNode(self, self.address, 'templateaddr', 'Template Node Name'))
-        if 'access_token' in self.polyConfig['customData']:
-            if self.polyConfig['customData']['access_token'] == self.access_token:
-                access_token = self.polyConfig['customData']['access_token']
-            else:
-                access_token = self.access_token
+        meastype_map = [{'1': 'Weight',
+                         '4': 'Height',
+                         '5': 'Fat Free Mass',
+                         '6': 'Fat Ratio',
+                         '8': 'Fat Mass Weight',
+                         '9': 'Diastolic Blood Pressure',
+                         '10': 'Systolic Blood Pressure',
+                         '11': 'Heart Pulse',
+                         '12': 'Temperature',
+                         '54': 'SP02',
+                         '71': 'Body Temperature',
+                         '73': 'Skin Temperature',
+                         '76': 'Muscle Mass',
+                         '77': 'Hydration',
+                         '88': 'Bone Mass',
+                         '91': 'Pulse Wave Velocity'
+                         }]
 
+        activities_map = [{'steps': 'Steps',
+                           'distance': 'Distance in Steps',
+                           'elevation': 'Floors Climbed',
+                           'soft': 'Light Activity',
+                           'moderate': 'Moderate Activity',
+                           'intense': 'Intense Activity',
+                           'active': 'Sum of Intense and Moderate',
+                           'calories': 'Active calories burned',
+                           'totalcalories': 'Total calories burned',
+                           'hr_average': 'Average heart rate',
+                           'hr_min': 'Minimal heart rate',
+                           'hr_max': 'Maximal heart rate',
+                           'hr_zone_0': 'Duration in light zone',
+                           'hr_zone_1': 'Duration in moderate zone',
+                           'hr_zone_2': 'Duration in intense zone',
+                           'hr_zone_3': 'Duration in maximal zone'
+                           }]
+
+        custom_data = self.polyConfig['customData']
+        for user_id in custom_data.keys():
+            # Create User ID Parent Nodes
+            self.addNode(UserParentNode(self, user_id, user_id, "Withings User " + str(user_id)))
+
+
+            # Use the access token and get the Withings Devices
+            # Create a Controller child device for each one
+            # Online Status and Battery Level are all the devices report
+            access_token = custom_data[user_id]['access_token']
+            # print("Access Token: " + access_token)
             withings = Withings(access_token)
 
             devices = withings.get_devices()
-            print(devices)
+            # print(devices)
             if devices is not None:
                 for dev in devices['body']['devices']:
-                    print(dev['type'])
-                    print(dev['battery'])
-                    print(dev['deviceid'])
-                    name = dev['type']
-                    naddr = dev['deviceid'][-12:].lower()
-                    print(name)
-                    print(naddr)
-                    self.addNode(WithingsDeviceNode(self, self.address, naddr, name))
+                    # print(dev['type'])
+                    # print(dev['battery'])
+                    # print(dev['deviceid'])
+                    node_name = dev['type']
+                    node_address = dev['deviceid'][-12:].lower()
+                    self.addNode(WithingsDeviceNode(self, self.address, node_address, node_name))
             else:
-                print(devices)
+                LOGGER.error("discover: No Withings devices")
 
-            # activities map
-            activities_map = [
-                                {"steps", "Steps"},
-                                {"distance", "Distance in Steps"},
-                                {"elevation", "Elevation"},
-                                {"soft", "Light Activity"},
-                                {"moderate", "Moderate Activity"},
-                                {"intense", "Intense Activity"},
-                                {"active", "Active Activity"},
-                                {"calories", "Activity Calories Used"},
-                                {"totalcalories", "Total Calories Used"}
-                                ]
+            measures = withings.get_measure()
+            for measure in measures['body']['measuregrps']:
+                print(measure)
+                _type = measure['type']
+                _value = measure['value']
+                print(_type)
+                print(_value)
+                # type = meas['measures']['type']
+                # value = meas['measures']['value']
+                # print("Type: " + str(type))
+                # print("Value: " + str(value))
+
+
+
+
 
     def delete(self):
         """
@@ -406,8 +458,8 @@ class WithingsDeviceNode(polyinterface.Node):
     def query(self, command=None):
         self.reportDrivers()
 
-    "Hints See: https://github.com/UniversalDevicesInc/hints"
-    hint = [1, 2, 3, 4]
+    # "Hints See: https://github.com/UniversalDevicesInc/hints"
+    # hint = [1, 2, 3, 4]
 
     id = 'WITHINGS_NODE'
 
@@ -418,6 +470,41 @@ class WithingsDeviceNode(polyinterface.Node):
     commands = {
         'DON': setOn, 'DOF': setOff
     }
+
+
+class UserParentNode(polyinterface.Node):
+    def __init__(self, controller, primary, address, name):
+        super(UserParentNode, self).__init__(controller, primary, address, name)
+
+    def start(self):
+        self.setDriver('ST', 1)
+
+    def shortPoll(self):
+        LOGGER.debug('shortPoll')
+
+    def longPoll(self):
+        LOGGER.debug('longPoll')
+
+    def setOn(self, command):
+        self.setDriver('ST', 1)
+
+    def setOff(self, command):
+        self.setDriver('ST', 0)
+
+    def query(self, command=None):
+        self.reportDrivers()
+
+    # "Hints See: https://github.com/UniversalDevicesInc/hints"
+    # hint = [1, 2, 3, 4]
+
+    id = 'USER_PARENT_NODE'
+
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
+
+    commands = {
+        'DON': setOn, 'DOF': setOff
+    }
+
 
 #
 # class CallBackServer:
