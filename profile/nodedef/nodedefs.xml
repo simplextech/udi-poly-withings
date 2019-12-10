@@ -48,4 +48,16 @@
             </accepts>
         </cmds>
     </nodeDef>
+
+    <!-- USER_PARENT_NODE -->
+    <nodeDef id="USER_PARENT_NODE" nls="USER_PARENT_NODE">
+        <editors />
+        <sts>
+            <st id="ST" editor="bool" />
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
 </nodeDefs>
