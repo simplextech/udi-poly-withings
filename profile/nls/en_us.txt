@@ -1,30 +1,30 @@
 # controller
-ND-controller-NAME = Template NodeServer Controller
-CMD-ctl-QUERY"-NAME = Query
+ND-controller-NAME = Withings NodeServer Controller
+CMD-ctl-QUERY-NAME = Query
 CMD-ctl-DISCOVER-NAME = Re-Discover
 CMD-ctl-UPDATE_PROFILE-NAME = Update Profile
 CMD-ctl-REMOVE_NOTICES_ALL-NAME = Remove All Notices
 CMD-ctl-REMOVE_NOTICE_TEST-NAME = Remove Notice Test
 ST-ctl-ST-NAME = NodeServer Online
 
-# mynodetype
-ND-tmplnode-NAME = Template Node
-ST-tmplnode-ST-NAME = Node Status
+# BATTERY LEVEL
+I_BATTERY-0 = N/A
+I_BATTERY-1 = Low
+I_BATTERY-2 = Medium
+I_BATTERY-3 = High
 
-# WITHINGS_NODE
+
 ND-WITHINGS_NODE-NAME = Withings Device
-ST-WITHINGS_NODE-ST-NAME = Node Status
+ST-WITHINGS-ST-NAME = Battery
 
-# PARENT_NODE
+
 ND-PARENT_NODE-NAME = Withings User
-ST-PARENT_NODE-ST-NAME = Node Status
+ST-PARENT-ST-NAME = Node Status
 
-# MEASURE_NODE
+
 ND-MEASURE_NODE-NAME = Withings Measurement
-ST-MEASURE_NODE-ST-NAME = Node Status
-ST-MEASURE_NODE-ICON = Input
+ST-MEASURE-ST-NAME = Node Status
 
-# ACTIVITY_NODE
+
 ND-ACTIVITY_NODE-NAME = Withings Activity
-ST-ACTIVITY_NODE-ST-NAME = Node Status
-ST-ACTIVITY_NODE-ICON = Input
+ST-ACTIVITY-ST-NAME = Node Status

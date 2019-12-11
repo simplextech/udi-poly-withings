@@ -8,21 +8,13 @@ except ImportError:
 LOGGER = polyinterface.LOGGER
 
 
-class WithingsDeviceNode(polyinterface.Node):
+class WithingsStepsNode(polyinterface.Node):
     def __init__(self, controller, primary, address, name, value):
-        super(WithingsDeviceNode, self).__init__(controller, primary, address, name)
+        super(WithingsStepsNode, self).__init__(controller, primary, address, name)
         self.value = value
 
     def start(self):
-        if self.value == "low":
-            battery = 1
-        elif self.value == "medium":
-            battery = 2
-        elif self.value == "high":
-            battery = 3
-        else:
-            battery = 0
-        self.setDriver('ST', battery)
+        self.setDriver('ST', self.value)
 
     # def shortPoll(self):
     #     LOGGER.debug('shortPoll')
@@ -42,9 +34,9 @@ class WithingsDeviceNode(polyinterface.Node):
     # "Hints See: https://github.com/UniversalDevicesInc/hints"
     # hint = [1, 2, 3, 4]
 
-    id = 'WITHINGS_NODE'
+    id = 'WITHINGS_STEPS'
 
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 25}]
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 0}]
 
     commands = {
         # 'DON': setOn, 'DOF': setOff

@@ -13,8 +13,10 @@ import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from withings import Withings
 import copy
-from nodes import WithingsParentNode
-from nodes import WithingsDeviceNode
+# from nodes import WithingsParentNode
+# from nodes import WithingsDeviceNode
+from nodes import *
+
 
 LOGGER = polyinterface.LOGGER
 
@@ -28,8 +30,46 @@ class Controller(polyinterface.Controller):
         self.access_token = None
         self.user_info = {}
         self.disco = 0
+        self.measure_type_map = {
+            1: 'Weight',
+            4: 'Height',
+            5: 'Fat Free Mass',
+            6: 'Fat Ratio',
+            8: 'Fat Mass Weight',
+            9: 'Diastolic Blood Pressure',
+            10: 'Systolic Blood Pressure',
+            11: 'Heart Pulse',
+            12: 'Temperature',
+            54: 'SP02',
+            71: 'Body Temperature',
+            73: 'Skin Temperature',
+            76: 'Muscle Mass',
+            77: 'Hydration',
+            88: 'Bone Mass',
+            91: 'Pulse Wave Velocity'
+        }
+
+        self.activities_map = {
+            'steps': 'Steps',
+            'distance': 'Distance in Steps',
+            'elevation': 'Floors Climbed',
+            'soft': 'Light Activity',
+            'moderate': 'Moderate Activity',
+            'intense': 'Intense Activity',
+            'active': 'Sum of Intense and Moderate',
+            'calories': 'Active calories burned',
+            'totalcalories': 'Total calories burned',
+            'hr_average': 'Average heart rate',
+            'hr_min': 'Minimal heart rate',
+            'hr_max': 'Maximal heart rate',
+            'hr_zone_0': 'Duration in light zone',
+            'hr_zone_1': 'Duration in moderate zone',
+            'hr_zone_2': 'Duration in intense zone',
+            'hr_zone_3': 'Duration in maximal zone'
+        }
 
     def start(self):
+        self.setDriver('ST', 1)
         # This grabs the server.json data and checks profile_version is up to date
         # serverdata = self.poly.get_server_data()
         # LOGGER.info('Started Template NodeServer {}'.format(serverdata['version']))
@@ -240,6 +280,7 @@ class Controller(polyinterface.Controller):
     def shortPoll(self):
         if self.disco != 0:
             LOGGER.debug('shortPoll')
+            self.withings_update()
 
     def longPoll(self):
         LOGGER.debug('longPoll')
@@ -250,42 +291,6 @@ class Controller(polyinterface.Controller):
             self.nodes[node].reportDrivers()
 
     def discover(self, *args, **kwargs):
-        measure_type_map = {
-                            1: 'Weight',
-                            4: 'Height',
-                            5: 'Fat Free Mass',
-                            6: 'Fat Ratio',
-                            8: 'Fat Mass Weight',
-                            9: 'Diastolic Blood Pressure',
-                            10: 'Systolic Blood Pressure',
-                            11: 'Heart Pulse',
-                            12: 'Temperature',
-                            54: 'SP02',
-                            71: 'Body Temperature',
-                            73: 'Skin Temperature',
-                            76: 'Muscle Mass',
-                            77: 'Hydration',
-                            88: 'Bone Mass',
-                            91: 'Pulse Wave Velocity'
-                            }
-
-        activities_map = {'steps': 'Steps',
-                          'distance': 'Distance in Steps',
-                          'elevation': 'Floors Climbed',
-                          'soft': 'Light Activity',
-                          'moderate': 'Moderate Activity',
-                          'intense': 'Intense Activity',
-                          'active': 'Sum of Intense and Moderate',
-                          'calories': 'Active calories burned',
-                          'totalcalories': 'Total calories burned',
-                          'hr_average': 'Average heart rate',
-                          'hr_min': 'Minimal heart rate',
-                          'hr_max': 'Maximal heart rate',
-                          'hr_zone_0': 'Duration in light zone',
-                          'hr_zone_1': 'Duration in moderate zone',
-                          'hr_zone_2': 'Duration in intense zone',
-                          'hr_zone_3': 'Duration in maximal zone'}
-
         custom_data = self.polyConfig['customData']
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
@@ -295,7 +300,8 @@ class Controller(polyinterface.Controller):
             for dev in devices['body']['devices']:
                 node_name = dev['type']
                 node_address = dev['deviceid'][-6:].lower()
-                self.addNode(WithingsDeviceNode(self, self.address, node_address, node_name))
+                battery = dev['battery']
+                self.addNode(WithingsDeviceNode(self, self.address, node_address, node_name, battery))
                 time.sleep(1)
 
             # Create User ID Parent Nodes
@@ -306,27 +312,119 @@ class Controller(polyinterface.Controller):
             # Create Measurement Nodes
             measures = withings.get_measure()
             for body in measures['body']['measuregrps']:
-                for measure in body['measures'][-1]:
+                for measure in body['measures']:
                     _type = measure['type']
-                    if _type in measure_type_map:
-                        type_label = measure_type_map[_type]
+                    if _type in self.measure_type_map:
+                        type_label = self.measure_type_map[_type]
                         node_address = parent_address + str(_type).lower()
-                        self.addNode(MeasureNode(self, parent_address, node_address, type_label))
+                        value = measure['value']
+                        if _type == 1:
+                            self.addNode(WithingsWeightNode(self, parent_address, node_address, type_label, value))
+                        if _type == 4:
+                            self.addNode(WithingsHeightNode(self, parent_address, node_address, type_label, value))
+                        if _type == 5:
+                            self.addNode(WithingsFatFreeNode(self, parent_address, node_address, type_label, value))
+                        if _type == 6:
+                            self.addNode(WithingsFatRatioNode(self, parent_address, node_address, type_label, value))
+                        if _type == 8:
+                            self.addNode(WithingsFatMassNode(self, parent_address, node_address, type_label, value))
+                        if _type == 9:
+                            self.addNode(WithingsDiastolicNode(self, parent_address, node_address, type_label, value))
+                        if _type == 10:
+                            self.addNode(WithingsSystolicNode(self, parent_address, node_address, type_label, value))
+                        if _type == 11:
+                            self.addNode(WithingsPulseNode(self, parent_address, node_address, type_label, value))
+                        if _type == 12:
+                            self.addNode(WithingsTemperatureNode(self, parent_address, node_address, type_label, value))
+                        if _type == 54:
+                            self.addNode(WithingsSP02Node(self, parent_address, node_address, type_label, value))
+                        if _type == 71:
+                            self.addNode(WithingsBodyTempNode(self, parent_address, node_address, type_label, value))
+                        if _type == 73:
+                            self.addNode(WithingsSkinTempNode(self, parent_address, node_address, type_label, value))
+                        if _type == 76:
+                            self.addNode(WithingsMuscleMassNode(self, parent_address, node_address, type_label, value))
+                        if _type == 77:
+                            self.addNode(WithingsHydrationNode(self, parent_address, node_address, type_label, value))
+                        if _type == 88:
+                            self.addNode(WithingsBoneMassNode(self, parent_address, node_address, type_label, value))
+                        if _type == 91:
+                            self.addNode(WithingsPulseWaveVelocityNode(self, parent_address, node_address, type_label, value))
+
+                        # self.addNode(MeasureNode(self, parent_address, node_address, type_label))
                         time.sleep(2)
                     else:
                         LOGGER.info("Measure Type Not Found")
 
             # Create Activity Nodes
             activities = withings.get_activities()
-            for body in activities['body']['activities'][-1]:
+            for body in activities['body']['activities']:
                 for act in body:
-                    if act in activities_map:
-                        act_label = activities_map[act]
+                    if act in self.activities_map:
+                        act_label = self.activities_map[act]
                         node_address = parent_address + str(act).replace('_', '')[:8].lower()
-                        self.addNode(MeasureNode(self, parent_address, node_address, act_label))
-                        time.sleep(2)
+                        value = body[act]
+                        print(act_label + " " + str(value))
+                        if act == 'steps':
+                            self.addNode(WithingsStepsNode(self, parent_address, node_address, act_label, value))
+                        if act == 'distance':
+                            self.addNode(WithingsDistanceNode(self, parent_address, node_address, act_label, value))
+                        if act == 'elevation':
+                            self.addNode(WithingsElevationNode(self, parent_address, node_address, act_label, value))
+                        if act == 'soft':
+                            self.addNode(WithingsSoftNode(self, parent_address, node_address, act_label, value))
+                        if act == 'moderate':
+                            self.addNode(WithingsModerateNode(self, parent_address, node_address, act_label, value))
+                        if act == 'intense':
+                            self.addNode(WithingsIntenseNode(self, parent_address, node_address, act_label, value))
+                        if act == 'active':
+                            self.addNode(WithingsActiveNode(self, parent_address, node_address, act_label, value))
+                        if act == 'calories':
+                            self.addNode(WithingsCaloriesNode(self, parent_address, node_address, act_label, value))
+                        if act == 'totalcalories':
+                            self.addNode(WithingsTotalCaloriesNode(self, parent_address, node_address, act_label, value))
+                        if act == 'hr_average':
+                            self.addNode(WithingsHRAverageNode(self, parent_address, node_address, act_label, value))
+                        if act == 'hr_min':
+                            self.addNode(WithingsHRMinNode(self, parent_address, node_address, act_label, value))
+                        if act == 'hr_max':
+                            self.addNode(WithingsHRMaxNode(self, parent_address, node_address, act_label, value))
+                        if act == 'hr_zone_0':
+                            self.addNode(WithingsHRZone0Node(self, parent_address, node_address, act_label, value))
+                        if act == 'hr_zone_1':
+                            self.addNode(WithingsHRZone1Node(self, parent_address, node_address, act_label, value))
+                        if act == 'hr_zone_2':
+                            self.addNode(WithingsHRZone2Node(self, parent_address, node_address, act_label, value))
+                        if act == 'hr_zone_3':
+                            self.addNode(WithingsHRZone3Node(self, parent_address, node_address, act_label, value))
+
+                        time.sleep(1)
                     else:
                         LOGGER.info("Activity Not Found")
+
+        # Enable short poll signaling discovery is complete
+        self.disco = 1
+
+    def withings_update(self):
+        custom_data = self.polyConfig['customData']
+        for user_id in custom_data.keys():
+            access_token = custom_data[user_id]['access_token']
+            withings = Withings(access_token)
+
+            devices = withings.get_devices()
+            for dev in devices['body']['devices']:
+                value = dev['battery']
+                if value == "low":
+                    battery = 1
+                elif value == "medium":
+                    battery = 2
+                elif value == "high":
+                    battery = 3
+                else:
+                    battery = 0
+
+                node_address = dev['deviceid'][-6:].lower()
+                self.nodes[node_address].setDriver("ST", battery)
 
     def delete(self):
         """
@@ -400,49 +498,15 @@ class Controller(polyinterface.Controller):
         'QUERY': query,
         'DISCOVER': discover,
         'UPDATE_PROFILE': update_profile,
-        'REMOVE_NOTICES_ALL': remove_notices_all,
-        'REMOVE_NOTICE_TEST': remove_notice_test
+        # 'REMOVE_NOTICES_ALL': remove_notices_all,
+        # 'REMOVE_NOTICE_TEST': remove_notice_test
     }
     drivers = [{'driver': 'ST', 'value': 1, 'uom': 2}]
 
 
-class TemplateNode(polyinterface.Node):
-    def __init__(self, controller, primary, address, name):
-        super(TemplateNode, self).__init__(controller, primary, address, name)
-
-    def start(self):
-        self.setDriver('ST', 1)
-
-    def shortPoll(self):
-        LOGGER.debug('shortPoll')
-
-    def longPoll(self):
-        LOGGER.debug('longPoll')
-
-    def setOn(self, command):
-        self.setDriver('ST', 1)
-
-    def setOff(self, command):
-        self.setDriver('ST', 0)
-
-    def query(self, command=None):
-        self.reportDrivers()
-
-    "Hints See: https://github.com/UniversalDevicesInc/hints"
-    hint = [1, 2, 3, 4]
-
-    id = 'templatenodeid'
-
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
-
-    commands = {
-        'DON': setOn, 'DOF': setOff
-    }
-
-
-# class WithingsDeviceNode(polyinterface.Node):
+# class TemplateNode(polyinterface.Node):
 #     def __init__(self, controller, primary, address, name):
-#         super(WithingsDeviceNode, self).__init__(controller, primary, address, name)
+#         super(TemplateNode, self).__init__(controller, primary, address, name)
 #
 #     def start(self):
 #         self.setDriver('ST', 1)
@@ -462,17 +526,58 @@ class TemplateNode(polyinterface.Node):
 #     def query(self, command=None):
 #         self.reportDrivers()
 #
+#     "Hints See: https://github.com/UniversalDevicesInc/hints"
+#     hint = [1, 2, 3, 4]
+#
+#     id = 'templatenodeid'
+#
+#     drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
+#
+#     commands = {
+#         'DON': setOn, 'DOF': setOff
+#     }
+
+
+# class WithingsDeviceNode(polyinterface.Node):
+#     def __init__(self, controller, primary, address, name, value):
+#         super(WithingsDeviceNode, self).__init__(controller, primary, address, name)
+#         self.value = value
+#
+#     def start(self):
+#         if self.value == "low":
+#             battery = 1
+#         elif self.value == "medium":
+#             battery = 2
+#         elif self.value == "high":
+#             battery = 3
+#         else:
+#             battery = 0
+#         self.setDriver('ST', battery)
+#
+#     # def shortPoll(self):
+#     #     LOGGER.debug('shortPoll')
+#     #
+#     # def longPoll(self):
+#     #     LOGGER.debug('longPoll')
+#     #
+#     # def setOn(self, command):
+#     #     self.setDriver('ST', 1)
+#     #
+#     # def setOff(self, command):
+#     #     self.setDriver('ST', 0)
+#     #
+#     # def query(self, command=None):
+#     #     self.reportDrivers()
+#
 #     # "Hints See: https://github.com/UniversalDevicesInc/hints"
 #     # hint = [1, 2, 3, 4]
 #
 #     id = 'WITHINGS_NODE'
 #
-#     drivers = [{'driver': 'ST', 'value': 0, 'uom': 2},
-#                {'driver': 'BATLVL', 'value': 0, 'uom': 2}
-#                ]
+#     drivers = [{'driver': 'ST', 'value': 0, 'uom': 25}]
 #
 #     commands = {
-#         'DON': setOn, 'DOF': setOff
+#         # 'DON': setOn, 'DOF': setOff
 #     }
 
 
@@ -510,72 +615,72 @@ class TemplateNode(polyinterface.Node):
 #     }
 
 
-class MeasureNode(polyinterface.Node):
-    def __init__(self, controller, primary, address, name):
-        super(MeasureNode, self).__init__(controller, primary, address, name)
-
-    def start(self):
-        self.setDriver('ST', 1)
-
-    def shortPoll(self):
-        LOGGER.debug('shortPoll')
-
-    def longPoll(self):
-        LOGGER.debug('longPoll')
-
-    def setOn(self, command):
-        self.setDriver('ST', 1)
-
-    def setOff(self, command):
-        self.setDriver('ST', 0)
-
-    def query(self, command=None):
-        self.reportDrivers()
-
-    # "Hints See: https://github.com/UniversalDevicesInc/hints"
-    # hint = [1, 2, 3, 4]
-
-    id = 'MEASURE_NODE'
-
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
-
-    commands = {
-        'DON': setOn, 'DOF': setOff
-    }
-
-
-class ActivityNode(polyinterface.Node):
-    def __init__(self, controller, primary, address, name):
-        super(ActivityNode, self).__init__(controller, primary, address, name)
-
-    def start(self):
-        self.setDriver('ST', 1)
-
-    def shortPoll(self):
-        LOGGER.debug('shortPoll')
-
-    def longPoll(self):
-        LOGGER.debug('longPoll')
-
-    def setOn(self, command):
-        self.setDriver('ST', 1)
-
-    def setOff(self, command):
-        self.setDriver('ST', 0)
-
-    def query(self, command=None):
-        self.reportDrivers()
-
-    # "Hints See: https://github.com/UniversalDevicesInc/hints"
-    # hint = [1, 2, 3, 4]
-
-    id = 'ACTIVITY_NODE'
-
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
-
-    commands = {
-        'DON': setOn, 'DOF': setOff
-    }
+# class MeasureNode(polyinterface.Node):
+#     def __init__(self, controller, primary, address, name):
+#         super(MeasureNode, self).__init__(controller, primary, address, name)
+#
+#     def start(self):
+#         self.setDriver('ST', 1)
+#
+#     def shortPoll(self):
+#         LOGGER.debug('shortPoll')
+#
+#     def longPoll(self):
+#         LOGGER.debug('longPoll')
+#
+#     def setOn(self, command):
+#         self.setDriver('ST', 1)
+#
+#     def setOff(self, command):
+#         self.setDriver('ST', 0)
+#
+#     def query(self, command=None):
+#         self.reportDrivers()
+#
+#     # "Hints See: https://github.com/UniversalDevicesInc/hints"
+#     # hint = [1, 2, 3, 4]
+#
+#     id = 'MEASURE_NODE'
+#
+#     drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
+#
+#     commands = {
+#         'DON': setOn, 'DOF': setOff
+#     }
+#
+#
+# class ActivityNode(polyinterface.Node):
+#     def __init__(self, controller, primary, address, name):
+#         super(ActivityNode, self).__init__(controller, primary, address, name)
+#
+#     def start(self):
+#         self.setDriver('ST', 1)
+#
+#     def shortPoll(self):
+#         LOGGER.debug('shortPoll')
+#
+#     def longPoll(self):
+#         LOGGER.debug('longPoll')
+#
+#     def setOn(self, command):
+#         self.setDriver('ST', 1)
+#
+#     def setOff(self, command):
+#         self.setDriver('ST', 0)
+#
+#     def query(self, command=None):
+#         self.reportDrivers()
+#
+#     # "Hints See: https://github.com/UniversalDevicesInc/hints"
+#     # hint = [1, 2, 3, 4]
+#
+#     id = 'ACTIVITY_NODE'
+#
+#     drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
+#
+#     commands = {
+#         'DON': setOn, 'DOF': setOff
+#     }
 
 
 #
@@ -629,6 +734,7 @@ class CallBackServer(BaseHTTPRequestHandler):
     #     #         str(self.path), str(self.headers), body.decode('utf-8'))
     #     params = dict([p.split('=') for p in body.decode('utf-8').split('&')])
     #     control.add_nodes(params)
+
 
 if __name__ == "__main__":
     try:

@@ -3,4 +3,35 @@
     <editor id="bool">
         <range uom="2" subset="0,1" />
     </editor>
+
+    <editor id="I_BATTERY">
+		<range uom="25" subset="0-3" nls="I_BATTERY"/>
+	</editor>
+
+    <editor id="I_CLITEMP">
+        <range uom="4" min="14" max="45" step="0.1" prec="1" />
+        <range uom="17" min="57" max="112" step="0.1" prec="1" />
+    </editor>
+
+    <editor id="I_WEIGHT">
+        <range uom="28" min="5" max="180" step="0.1" prec="1" />
+        <range uom="52" min="9" max="396" step="0.1" prec="1" />
+    </editor>
+
+    <editor id="I_PERCENT">
+        <range uom="51" min="0" max="100" step="0.1" prec="1" />
+    </editor>
+
+    <editor id="I_STEPS">
+        <range uom="0" min="0" max="100000" step="1" prec="0" />
+    </editor>
+
+    <editor id="I_DISTANCE">
+        <range uom="38" min="0" max="10000" step="0.1" prec="1" />
+        <range uom="116" min="0" max="10000" step="0.1" prec="1" />
+    </editor>
+
+    <editor id="I_SECONDS">
+        <range uom="57" min="0" max="100000" step="1" prec="0" />
+    </editor>
 </editors>
