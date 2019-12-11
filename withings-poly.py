@@ -48,7 +48,6 @@ class Controller(polyinterface.Controller):
             88: 'Bone Mass',
             91: 'Pulse Wave Velocity'
         }
-
         self.activities_map = {
             'steps': 'Steps',
             'distance': 'Distance in Steps',
@@ -284,6 +283,7 @@ class Controller(polyinterface.Controller):
 
     def longPoll(self):
         LOGGER.debug('longPoll')
+        self.refresh_token()
 
     def query(self, command=None):
         self.check_params()
@@ -428,13 +428,7 @@ class Controller(polyinterface.Controller):
                     self.nodes[node_address].setDriver("ST", battery)
 
     def delete(self):
-        """
-        Example
-        This is sent by Polyglot upon deletion of the NodeServer. If the process is
-        co-resident and controlled by Polyglot, it will be terminiated within 5 seconds
-        of receiving this message.
-        """
-        LOGGER.info('Oh God I\'m being deleted. Nooooooooooooooooooooooooooooooooooooooooo.')
+        LOGGER.info('Removing Withings Nodeserver')
 
     def stop(self):
         LOGGER.debug('NodeServer stopped.')
