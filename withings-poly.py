@@ -412,19 +412,20 @@ class Controller(polyinterface.Controller):
             withings = Withings(access_token)
 
             devices = withings.get_devices()
-            for dev in devices['body']['devices']:
-                value = dev['battery']
-                if value == "low":
-                    battery = 1
-                elif value == "medium":
-                    battery = 2
-                elif value == "high":
-                    battery = 3
-                else:
-                    battery = 0
+            if devices is not None:
+                for dev in devices['body']['devices']:
+                    value = dev['battery']
+                    if value == "low":
+                        battery = 1
+                    elif value == "medium":
+                        battery = 2
+                    elif value == "high":
+                        battery = 3
+                    else:
+                        battery = 0
 
-                node_address = dev['deviceid'][-6:].lower()
-                self.nodes[node_address].setDriver("ST", battery)
+                    node_address = dev['deviceid'][-6:].lower()
+                    self.nodes[node_address].setDriver("ST", battery)
 
     def delete(self):
         """
