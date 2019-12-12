@@ -15,7 +15,7 @@ class WithingsBoneMassNode(polyinterface.Node):
         self.value = value
 
     def start(self):
-        value = utils.kilogram_to_pound_weight(self.value)
+        value = utils.kilogram_to_pound_mass(self.value)
         self.setDriver('ST', value)
 
     # def shortPoll(self):

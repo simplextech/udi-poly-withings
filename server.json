@@ -9,7 +9,7 @@
     "shortPoll": "120",
     "longPoll": "240",
     "testMode": true,
-    "profile_version": "0.0.1",
+    "profile_version": "0.0.2",
     "httpsIngress": true,
     "credits": [
         {

@@ -15,7 +15,7 @@ class WithingsDistanceNode(polyinterface.Node):
         self.value = value
 
     def start(self):
-        value = utils.meters_to_feet(self.value)
+        value = utils.meters_to_mile(self.value)
         self.setDriver('ST', value)
 
     # def shortPoll(self):
@@ -38,7 +38,7 @@ class WithingsDistanceNode(polyinterface.Node):
 
     id = 'WITHINGS_DISTANCE'
 
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 18}]
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 116}]
 
     commands = {
         # 'DON': setOn, 'DOF': setOff

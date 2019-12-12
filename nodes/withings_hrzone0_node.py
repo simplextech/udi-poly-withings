@@ -4,6 +4,7 @@ try:
 except ImportError:
     import pgc_interface as polyinterface
 
+import utils
 
 LOGGER = polyinterface.LOGGER
 
@@ -14,7 +15,8 @@ class WithingsHRZone0Node(polyinterface.Node):
         self.value = value
 
     def start(self):
-        self.setDriver('ST', self.value)
+        value = utils.seconds_to_minutes(self.value)
+        self.setDriver('ST', value)
 
     # def shortPoll(self):
     #     LOGGER.debug('shortPoll')
@@ -36,7 +38,7 @@ class WithingsHRZone0Node(polyinterface.Node):
 
     id = 'WITHINGS_HRZONE0'
 
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 0}]
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 45}]
 
     commands = {
         # 'DON': setOn, 'DOF': setOff

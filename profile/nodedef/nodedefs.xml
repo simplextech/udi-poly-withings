@@ -18,21 +18,6 @@
         </cmds>
     </nodeDef>
 
-	<!-- templatenodeid -->
-    <nodeDef id="templatenodeid" nls="tmplnode">
-        <editors />
-        <sts>
-            <st id="ST" editor="bool" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts>
-                <cmd id="DON" />
-                <cmd id="DOF" />
-            </accepts>
-        </cmds>
-    </nodeDef>
-
     <!-- WITHINGS_NODE -->
     <nodeDef id="WITHINGS_NODE" nls="WITHINGS">
         <editors />
@@ -108,7 +93,7 @@
     <nodeDef id="WITHINGS_BONEMASS" nls="BONEMASS">
         <editors />
         <sts>
-            <st id="ST" editor="_51_1" />
+            <st id="ST" editor="_52_1" />
         </sts>
         <cmds>
             <sends />
@@ -119,7 +104,7 @@
     <nodeDef id="WITHINGS_CALORIES" nls="CALORIES">
         <editors />
         <sts>
-            <st id="ST" editor="_0_1" />
+            <st id="ST" editor="_56_1" />
         </sts>
         <cmds>
             <sends />
@@ -130,7 +115,7 @@
     <nodeDef id="WITHINGS_DIASTOLIC" nls="DIASTOLIC">
         <editors />
         <sts>
-            <st id="ST" editor="_0_1" />
+            <st id="ST" editor="_56_1" />
         </sts>
         <cmds>
             <sends />
@@ -141,7 +126,7 @@
     <nodeDef id="WITHINGS_DISTANCE" nls="DISTANCE">
         <editors />
         <sts>
-            <st id="ST" editor="_38_1" />
+            <st id="ST" editor="_116_2" />
         </sts>
         <cmds>
             <sends />
@@ -152,7 +137,7 @@
     <nodeDef id="WITHINGS_ELEVATION" nls="ELEVATION">
         <editors />
         <sts>
-            <st id="ST" editor="_0_1" />
+            <st id="ST" editor="_56_1" />
         </sts>
         <cmds>
             <sends />
@@ -163,7 +148,7 @@
     <nodeDef id="WITHINGS_FATFREE" nls="FATFREE">
         <editors />
         <sts>
-            <st id="ST" editor="_28_1" />
+            <st id="ST" editor="_52_1" />
         </sts>
         <cmds>
             <sends />
@@ -174,7 +159,7 @@
     <nodeDef id="WITHINGS_FATMASS" nls="FATMASS">
         <editors />
         <sts>
-            <st id="ST" editor="_28_1" />
+            <st id="ST" editor="_52_1" />
         </sts>
         <cmds>
             <sends />
@@ -185,7 +170,7 @@
     <nodeDef id="WITHINGS_FATRATIO" nls="FATRATIO">
         <editors />
         <sts>
-            <st id="ST" editor="_51_1" />
+            <st id="ST" editor="_51_2" />
         </sts>
         <cmds>
             <sends />
@@ -196,7 +181,7 @@
     <nodeDef id="WITHINGS_HEIGHT" nls="HEIGHT">
         <editors />
         <sts>
-            <st id="ST" editor="bool" />
+            <st id="ST" editor="_18_0" />
         </sts>
         <cmds>
             <sends />
@@ -207,7 +192,7 @@
     <nodeDef id="WITHINGS_HRAVERAGE" nls="HRAVERAGE">
         <editors />
         <sts>
-            <st id="ST" editor="_0_0" />
+            <st id="ST" editor="_56_0" />
         </sts>
         <cmds>
             <sends />
@@ -218,7 +203,7 @@
     <nodeDef id="WITHINGS_HRMAX" nls="HRMAX">
         <editors />
         <sts>
-            <st id="ST" editor="_0_0" />
+            <st id="ST" editor="_56_0" />
         </sts>
         <cmds>
             <sends />
@@ -229,7 +214,7 @@
     <nodeDef id="WITHINGS_HRMIN" nls="HRMIN">
         <editors />
         <sts>
-            <st id="ST" editor="_0_0" />
+            <st id="ST" editor="_56_0" />
         </sts>
         <cmds>
             <sends />
@@ -328,7 +313,7 @@
     <nodeDef id="WITHINGS_PULSE" nls="PULSE">
         <editors />
         <sts>
-            <st id="ST" editor="_0_0" />
+            <st id="ST" editor="_56_0" />
         </sts>
         <cmds>
             <sends />
@@ -339,7 +324,7 @@
     <nodeDef id="WITHINGS_PWV" nls="PWV">
         <editors />
         <sts>
-            <st id="ST" editor="_0_0" />
+            <st id="ST" editor="_56_0" />
         </sts>
         <cmds>
             <sends />
@@ -383,7 +368,7 @@
     <nodeDef id="WITHINGS_STEPS" nls="STEPS">
         <editors />
         <sts>
-            <st id="ST" editor="_0_1" />
+            <st id="ST" editor="_56_1" />
         </sts>
         <cmds>
             <sends />
@@ -394,7 +379,7 @@
     <nodeDef id="WITHINGS_SYSTOLIC" nls="SYSTOLIC">
         <editors />
         <sts>
-            <st id="ST" editor="_0_1" />
+            <st id="ST" editor="_56_1" />
         </sts>
         <cmds>
             <sends />
@@ -416,7 +401,7 @@
     <nodeDef id="WITHINGS_TOTALCALORIES" nls="TOTALCALORIES">
         <editors />
         <sts>
-            <st id="ST" editor="_0_0" />
+            <st id="ST" editor="_56_2" />
         </sts>
         <cmds>
             <sends />
@@ -427,7 +412,7 @@
     <nodeDef id="WITHINGS_WEIGHT" nls="WEIGHT">
         <editors />
         <sts>
-            <st id="ST" editor="_17_1" />
+            <st id="ST" editor="_52_1" />
         </sts>
         <cmds>
             <sends />

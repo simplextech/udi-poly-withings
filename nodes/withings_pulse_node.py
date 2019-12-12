@@ -15,8 +15,7 @@ class WithingsPulseNode(polyinterface.Node):
         self.value = value
 
     def start(self):
-        value = utils.beats_per_minute(self.value)
-        self.setDriver('ST', value)
+        self.setDriver('ST', self.value)
 
     # def shortPoll(self):
     #     LOGGER.debug('shortPoll')

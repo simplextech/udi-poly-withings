@@ -15,6 +15,11 @@ def meters_to_feet(meters):
     return ft
 
 
+def meters_to_mile(meters):
+    mi = round((float(meters) * 0.0006213712), 2)
+    return mi
+
+
 def json_to_normal(val):
     norm = round(val / 1000, 2)
     return norm
@@ -27,6 +32,11 @@ def kilogram_to_pound(kilogram):
 
 def kilogram_to_pound_weight(kilogram):
     lb = round(float(kilogram) * 2.2046 / 1000, 2)
+    return lb
+
+
+def kilogram_to_pound_mass(kilogram):
+    lb = round(float(kilogram) * 2.2046 / 100, 2)
     return lb
 
 

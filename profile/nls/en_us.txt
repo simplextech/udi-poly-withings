@@ -19,12 +19,45 @@ ST-WITHINGS-ST-NAME = Battery
 
 
 ND-PARENT_NODE-NAME = Withings User
-ST-PARENT-ST-NAME = Node Status
+ST-PARENT-ST-NAME = Online
 
 
 ND-MEASURE_NODE-NAME = Withings Measurement
-ST-MEASURE-ST-NAME = Node Status
+ST-MEASURE-ST-NAME = Online
 
 
 ND-ACTIVITY_NODE-NAME = Withings Activity
-ST-ACTIVITY-ST-NAME = Node Status
+ST-ACTIVITY-ST-NAME = Online
+
+ST-ACTIVE-ST-NAME = Sum Activity Time
+ST-BODYTEMP-ST-NAME = Body Temperature
+ST-BONEMASS-ST-NAME = Bone Mass
+ST-CALORIES-ST-NAME = Calories Burned
+ST-DIASTOLIC-ST-NAME = Diastolic mmHg
+ST-DISTANCE-ST-NAME = Distance
+ST-ELEVATION-ST-NAME = Floors Climbed
+ST-FATFREE-ST-NAME = Fat Free
+ST-FATMASS-ST-NAME = Fat Mass
+ST-FATRATIO-ST-NAME = Fat Percent
+ST-HEIGHT-ST-NAME = Height
+ST-HRAVERAGE-ST-NAME = Heart Rate
+ST-HRMAX-ST-NAME = Heart Rate
+ST-HRMIN-ST-NAME = Heart Rate
+ST-HRZONE0-ST-NAME = HR Zone 0
+ST-HRZONE1-ST-NAME = HR Zone 1
+ST-HRZONE2-ST-NAME = HR Zone 2
+ST-HRZONE3-ST-NAME = HR Zone 3
+ST-HYDRATION-ST-NAME = Water Weight
+ST-INTENSE-ST-NAME = Activity Time
+ST-MODERATE-ST-NAME = Activity Time
+ST-MUSCLEMASS-ST-NAME = Muscle Mass
+ST-PULSE-ST-NAME = Heart Rate
+ST-PWV-ST-NAME = Pulse Wave Velocity
+ST-SKINTEMP-ST-NAME = Skin Temperature
+ST-SOFT-ST-NAME = Activity Time
+ST-SP02-ST-NAME = SP02
+ST-STEPS-ST-NAME = Steps
+ST-SYSSTOLIC-ST-NAME = Systolic mmHg
+ST-TEMP-ST-NAME = Temperature
+ST-TOTALCALORIES-ST-NAME = Total Calories Burned
+ST-WEIGHT-ST-NAME = Weight

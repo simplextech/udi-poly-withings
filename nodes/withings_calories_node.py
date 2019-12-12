@@ -14,7 +14,8 @@ class WithingsCaloriesNode(polyinterface.Node):
         self.value = value
 
     def start(self):
-        self.setDriver('ST', self.value)
+        value = round(self.value, 2)
+        self.setDriver('ST', value)
 
     # def shortPoll(self):
     #     LOGGER.debug('shortPoll')

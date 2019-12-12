@@ -16,7 +16,7 @@ class WithingsFatRatioNode(polyinterface.Node):
 
     def start(self):
         value = utils.json_to_normal(self.value)
-        self.setDriver('ST', self.value)
+        self.setDriver('ST', value)
 
     # def shortPoll(self):
     #     LOGGER.debug('shortPoll')
