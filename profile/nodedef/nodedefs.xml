@@ -424,7 +424,7 @@
     <nodeDef id="WITHINGS_SCALE" nls="SCALE">
         <editors />
         <sts>
-            <st id="BATLVL" editor="_51_1" /> <!--Battery -->
+            <st id="BATLVL" editor="I_BATTERY" /> <!--Battery -->
             <st id="ST" editor="_52_1" />   <!--Weight -->
             <st id="GV0" editor="_52_1" />  <!--Muscle Mass -->
             <st id="GV1" editor="_52_1" />  <!--Bone Mass -->
@@ -438,10 +438,10 @@
         </cmds>
     </nodeDef>
 
-    <nodeDef id="WITHINGS_SCALE_HR" nls="SCALE_HR">
+    <nodeDef id="WITHINGS_SCALE_HR" nls="SCALE">
         <editors />
         <sts>
-            <st id="BATLVL" editor="_51_1" /> <!--Battery -->
+            <st id="BATLVL" editor="I_BATTERY" /> <!--Battery -->
             <st id="ST" editor="_52_1" />   <!--Weight -->
             <st id="GV0" editor="_52_1" />  <!--Muscle Mass -->
             <st id="GV1" editor="_52_1" />  <!--Bone Mass -->
@@ -449,6 +449,43 @@
             <st id="GV3" editor="_52_1" />  <!--Fat Free Mass -->
             <st id="GV4" editor="_52_1" />  <!--Fat Ratio -->
             <st id="GV5" editor="_56_1" />  <!--Heart Rate -->
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
+
+    <nodeDef id="WITHINGS_ACTIVITY" nls="ACTIVITY">
+        <editors />
+        <sts>
+            <st id="ST" editor="_56_1" />           <!-- Steps -->
+            <st id="BATLVL" editor="I_BATTERY" />   <!-- Battery -->
+            <st id="GV0" editor="_116_1" />         <!-- Distance -->
+            <st id="GV1" editor="_56_1" />          <!-- Elevation/Floors -->
+            <st id="GV2" editor="_45_1" />          <!-- Soft/Light Activity -->
+            <st id="GV3" editor="_45_1" />          <!-- Moderate Activity -->
+            <st id="GV4" editor="_45_1" />          <!-- Intense Activity -->
+            <st id="GV5" editor="_45_1" />          <!-- Sum Activity -->
+            <st id="GV6" editor="_56_1" />          <!-- Calories -->
+            <st id="GV7" editor="_56_1" />          <!-- Total Calories -->
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
+
+    <nodeDef id="WITHINGS_ACTIVITY_HR" nls="ACTHR">
+        <editors />
+        <sts>
+            <st id="ST" editor="_56_1" />   <!-- HR Average -->
+            <st id="GV0" editor="_56_1" />  <!-- HR Min -->
+            <st id="GV1" editor="_56_1" />  <!-- HR Max -->
+            <st id="GV2" editor="_45_1" />  <!-- HR Zone 0 -->
+            <st id="GV3" editor="_45_1" />  <!-- HR Zone 1 -->
+            <st id="GV4" editor="_45_1" />  <!-- HR Zone 2 -->
+            <st id="GV5" editor="_45_1" />  <!-- HR Zone 3 -->
         </sts>
         <cmds>
             <sends />
