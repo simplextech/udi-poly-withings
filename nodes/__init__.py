@@ -35,3 +35,6 @@ from .withings_systolic_node import WithingsSystolicNode
 from .withings_temperature_node import WithingsTemperatureNode
 from .withings_totalcalories_node import WithingsTotalCaloriesNode
 from .withings_weight_node import WithingsWeightNode
+
+from .withings_scale_node import WithingsScaleNode
+from .withings_scale_hr_node import WithingsScaleHRNode

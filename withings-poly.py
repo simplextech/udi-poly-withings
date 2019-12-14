@@ -7,16 +7,16 @@ except ImportError:
 import sys
 import time
 import requests
-from flask import Flask
-from flask import Response
-import threading
+# from flask import Flask
+# from flask import Response
+# import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from withings import Withings
 import copy
 # from nodes import WithingsParentNode
 # from nodes import WithingsDeviceNode
 from nodes import *
-
+import utils
 
 LOGGER = polyinterface.LOGGER
 
@@ -183,7 +183,10 @@ class Controller(polyinterface.Controller):
     def oauth(self, oauth):
         LOGGER.info('OAUTH Received: {}'.format(oauth))
         if 'code' in oauth:
-            self.get_token(oauth['code'])
+            if self.get_token(oauth['code']):
+                LOGGER.info("Withings OAuth Successful")
+            else:
+                LOGGER.warn("Withings OAuth Failed")
         else:
             print(oauth)
 
@@ -216,7 +219,8 @@ class Controller(polyinterface.Controller):
                     # print("------------ NEW USER: " + str(user_id) + " ----------------")
                     custom_data[user_id] = {'access_token': access_token,
                                             'refresh_token': refresh_token,
-                                            'expires_in': expires_in}
+                                            'expires_in': expires_in,
+                                            'user_id': user_id}
 
                     # print("Get Token End----------------------------------")
                     # print(custom_data)
@@ -255,11 +259,12 @@ class Controller(polyinterface.Controller):
                     access_token = resp['access_token']
                     refresh_token = resp['refresh_token']
                     expires_in = resp['expires_in']
-                    # user_id = resp['userid']
+                    _user_id = resp['userid']
 
                     custom_data[user_id] = {'access_token': access_token,
                                             'refresh_token': refresh_token,
-                                            'expires_in': expires_in}
+                                            'expires_in': expires_in,
+                                            'user_id': _user_id}
 
                     _state = True
                 else:
@@ -295,122 +300,128 @@ class Controller(polyinterface.Controller):
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
             withings = Withings(access_token)
+            # parent_address = str(user_id)[-3:] + "_"
+            parent_address = str(user_id)[-3:]
 
             devices = withings.get_devices()
             if devices is not None:
                 for dev in devices['body']['devices']:
                     node_name = dev['type']
-                    node_address = dev['deviceid'][-6:].lower()
+                    dev_type = dev['type']
                     battery = dev['battery']
+                    model_id = dev['model_id']
+                    node_address = dev['deviceid'][-6:].lower() + "_" + str(model_id)
                     self.addNode(WithingsDeviceNode(self, self.address, node_address, node_name, battery))
                     time.sleep(1)
 
-                # Create User ID Parent Nodes
-                parent_address = str(user_id)[-3:] + "_"
-                self.addNode(WithingsParentNode(self, parent_address, parent_address, "Withings User " + str(user_id)))
-                time.sleep(1)
+                    # Create User ID Parent Nodes
+                    self.addNode(WithingsParentNode(self, parent_address, parent_address, "Withings User " + str(user_id)))
+                    time.sleep(1)
 
                 # Create Measurement Nodes
                 measures = withings.get_measure()
-                for body in measures['body']['measuregrps']:
-                    for measure in body['measures']:
-                        _type = measure['type']
-                        if _type in self.measure_type_map:
-                            type_label = self.measure_type_map[_type]
-                            node_address = parent_address + str(_type).lower()
-                            value = measure['value']
-                            if _type == 1:
-                                self.addNode(WithingsWeightNode(self, parent_address, node_address, type_label, value))
-                            if _type == 4:
-                                self.addNode(WithingsHeightNode(self, parent_address, node_address, type_label, value))
-                            if _type == 5:
-                                self.addNode(WithingsFatFreeNode(self, parent_address, node_address, type_label, value))
-                            if _type == 6:
-                                self.addNode(WithingsFatRatioNode(self, parent_address, node_address, type_label, value))
-                            if _type == 8:
-                                self.addNode(WithingsFatMassNode(self, parent_address, node_address, type_label, value))
-                            if _type == 9:
-                                self.addNode(WithingsDiastolicNode(self, parent_address, node_address, type_label, value))
-                            if _type == 10:
-                                self.addNode(WithingsSystolicNode(self, parent_address, node_address, type_label, value))
-                            if _type == 11:
-                                self.addNode(WithingsPulseNode(self, parent_address, node_address, type_label, value))
-                            if _type == 12:
-                                self.addNode(WithingsTemperatureNode(self, parent_address, node_address, type_label, value))
-                            if _type == 54:
-                                self.addNode(WithingsSP02Node(self, parent_address, node_address, type_label, value))
-                            if _type == 71:
-                                self.addNode(WithingsBodyTempNode(self, parent_address, node_address, type_label, value))
-                            if _type == 73:
-                                self.addNode(WithingsSkinTempNode(self, parent_address, node_address, type_label, value))
-                            if _type == 76:
-                                self.addNode(WithingsMuscleMassNode(self, parent_address, node_address, type_label, value))
-                            if _type == 77:
-                                self.addNode(WithingsHydrationNode(self, parent_address, node_address, type_label, value))
-                            if _type == 88:
-                                self.addNode(WithingsBoneMassNode(self, parent_address, node_address, type_label, value))
-                            if _type == 91:
-                                self.addNode(WithingsPulseWaveVelocityNode(self, parent_address, node_address, type_label, value))
+                if measures is not None:
 
-                            # self.addNode(MeasureNode(self, parent_address, node_address, type_label))
-                            time.sleep(2)
-                        else:
-                            LOGGER.info("Measure Type Not Found")
+                    for body in measures['body']['measuregrps']:
+                        for measure in body['measures']:
+                            _type = measure['type']
+                            if _type in self.measure_type_map:
+                                type_label = self.measure_type_map[_type]
+                                node_address = parent_address + str(_type).lower()
+                                value = measure['value']
+                                if _type == 1:
+                                    self.addNode(WithingsWeightNode(self, parent_address, node_address, type_label, value))
+                                if _type == 4:
+                                    self.addNode(WithingsHeightNode(self, parent_address, node_address, type_label, value))
+                                if _type == 5:
+                                    self.addNode(WithingsFatFreeNode(self, parent_address, node_address, type_label, value))
+                                if _type == 6:
+                                    self.addNode(WithingsFatRatioNode(self, parent_address, node_address, type_label, value))
+                                if _type == 8:
+                                    self.addNode(WithingsFatMassNode(self, parent_address, node_address, type_label, value))
+                                if _type == 9:
+                                    self.addNode(WithingsDiastolicNode(self, parent_address, node_address, type_label, value))
+                                if _type == 10:
+                                    self.addNode(WithingsSystolicNode(self, parent_address, node_address, type_label, value))
+                                if _type == 11:
+                                    self.addNode(WithingsPulseNode(self, parent_address, node_address, type_label, value))
+                                if _type == 12:
+                                    self.addNode(WithingsTemperatureNode(self, parent_address, node_address, type_label, value))
+                                if _type == 54:
+                                    self.addNode(WithingsSP02Node(self, parent_address, node_address, type_label, value))
+                                if _type == 71:
+                                    self.addNode(WithingsBodyTempNode(self, parent_address, node_address, type_label, value))
+                                if _type == 73:
+                                    self.addNode(WithingsSkinTempNode(self, parent_address, node_address, type_label, value))
+                                if _type == 76:
+                                    self.addNode(WithingsMuscleMassNode(self, parent_address, node_address, type_label, value))
+                                if _type == 77:
+                                    self.addNode(WithingsHydrationNode(self, parent_address, node_address, type_label, value))
+                                if _type == 88:
+                                    self.addNode(WithingsBoneMassNode(self, parent_address, node_address, type_label, value))
+                                if _type == 91:
+                                    self.addNode(WithingsPulseWaveVelocityNode(self, parent_address, node_address, type_label, value))
+
+                                time.sleep(2)
+                            else:
+                                LOGGER.info("Measure Type Not Found")
 
                 # Create Activity Nodes
                 activities = withings.get_activities()
-                for body in activities['body']['activities']:
-                    for act in body:
-                        if act in self.activities_map:
-                            act_label = self.activities_map[act]
-                            node_address = parent_address + str(act).replace('_', '')[:8].lower()
-                            value = body[act]
-                            print(act_label + " " + str(value))
-                            if act == 'steps':
-                                self.addNode(WithingsStepsNode(self, parent_address, node_address, act_label, value))
-                            if act == 'distance':
-                                self.addNode(WithingsDistanceNode(self, parent_address, node_address, act_label, value))
-                            if act == 'elevation':
-                                self.addNode(WithingsElevationNode(self, parent_address, node_address, act_label, value))
-                            if act == 'soft':
-                                self.addNode(WithingsSoftNode(self, parent_address, node_address, act_label, value))
-                            if act == 'moderate':
-                                self.addNode(WithingsModerateNode(self, parent_address, node_address, act_label, value))
-                            if act == 'intense':
-                                self.addNode(WithingsIntenseNode(self, parent_address, node_address, act_label, value))
-                            if act == 'active':
-                                self.addNode(WithingsActiveNode(self, parent_address, node_address, act_label, value))
-                            if act == 'calories':
-                                self.addNode(WithingsCaloriesNode(self, parent_address, node_address, act_label, value))
-                            if act == 'totalcalories':
-                                self.addNode(WithingsTotalCaloriesNode(self, parent_address, node_address, act_label, value))
-                            if act == 'hr_average':
-                                self.addNode(WithingsHRAverageNode(self, parent_address, node_address, act_label, value))
-                            if act == 'hr_min':
-                                self.addNode(WithingsHRMinNode(self, parent_address, node_address, act_label, value))
-                            if act == 'hr_max':
-                                self.addNode(WithingsHRMaxNode(self, parent_address, node_address, act_label, value))
-                            if act == 'hr_zone_0':
-                                self.addNode(WithingsHRZone0Node(self, parent_address, node_address, act_label, value))
-                            if act == 'hr_zone_1':
-                                self.addNode(WithingsHRZone1Node(self, parent_address, node_address, act_label, value))
-                            if act == 'hr_zone_2':
-                                self.addNode(WithingsHRZone2Node(self, parent_address, node_address, act_label, value))
-                            if act == 'hr_zone_3':
-                                self.addNode(WithingsHRZone3Node(self, parent_address, node_address, act_label, value))
+                if activities is not None:
+                    for body in activities['body']['activities']:
+                        for act in body:
+                            if act in self.activities_map:
+                                act_label = self.activities_map[act]
+                                node_address = parent_address + str(act).replace('_', '')[:8].lower()
+                                value = body[act]
+                                if act == 'steps':
+                                    self.addNode(WithingsStepsNode(self, parent_address, node_address, act_label, value))
+                                if act == 'distance':
+                                    self.addNode(WithingsDistanceNode(self, parent_address, node_address, act_label, value))
+                                if act == 'elevation':
+                                    self.addNode(WithingsElevationNode(self, parent_address, node_address, act_label, value))
+                                if act == 'soft':
+                                    self.addNode(WithingsSoftNode(self, parent_address, node_address, act_label, value))
+                                if act == 'moderate':
+                                    self.addNode(WithingsModerateNode(self, parent_address, node_address, act_label, value))
+                                if act == 'intense':
+                                    self.addNode(WithingsIntenseNode(self, parent_address, node_address, act_label, value))
+                                if act == 'active':
+                                    self.addNode(WithingsActiveNode(self, parent_address, node_address, act_label, value))
+                                if act == 'calories':
+                                    self.addNode(WithingsCaloriesNode(self, parent_address, node_address, act_label, value))
+                                if act == 'totalcalories':
+                                    self.addNode(WithingsTotalCaloriesNode(self, parent_address, node_address, act_label, value))
+                                if act == 'hr_average':
+                                    self.addNode(WithingsHRAverageNode(self, parent_address, node_address, act_label, value))
+                                if act == 'hr_min':
+                                    self.addNode(WithingsHRMinNode(self, parent_address, node_address, act_label, value))
+                                if act == 'hr_max':
+                                    self.addNode(WithingsHRMaxNode(self, parent_address, node_address, act_label, value))
+                                if act == 'hr_zone_0':
+                                    self.addNode(WithingsHRZone0Node(self, parent_address, node_address, act_label, value))
+                                if act == 'hr_zone_1':
+                                    self.addNode(WithingsHRZone1Node(self, parent_address, node_address, act_label, value))
+                                if act == 'hr_zone_2':
+                                    self.addNode(WithingsHRZone2Node(self, parent_address, node_address, act_label, value))
+                                if act == 'hr_zone_3':
+                                    self.addNode(WithingsHRZone3Node(self, parent_address, node_address, act_label, value))
 
-                            time.sleep(1)
-                        else:
-                            LOGGER.info("Activity Not Found")
+                                time.sleep(2)
+                            else:
+                                LOGGER.info("Activity Not Found")
 
-        # Enable short poll signaling discovery is complete
+        # Enable short poll discovery is complete
         self.disco = 1
 
     def withings_update(self):
         custom_data = self.polyConfig['customData']
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
+            user = custom_data[user_id]['user_id']
             withings = Withings(access_token)
+            parent_address = str(user)[-3:]
 
             devices = withings.get_devices()
             if devices is not None:
@@ -426,7 +437,98 @@ class Controller(polyinterface.Controller):
                         battery = 0
 
                     node_address = dev['deviceid'][-6:].lower()
-                    self.nodes[node_address].setDriver("ST", battery)
+                    self.nodes[node_address].setDriver('ST', battery)
+
+            measures = withings.get_measure()
+            if measures is not None:
+                for body in measures['body']['measuregrps']:
+                    for measure in body['measures']:
+                        _type = measure['type']
+                        if _type in self.measure_type_map:
+                            node_address = parent_address + str(_type).lower()
+                            value = measure['value']
+                            if _type == 1:
+                                val = utils.kilogram_to_pound_weight(value)
+                            elif _type == 4:
+                                val = utils.meters_to_feet(value)
+                            elif _type == 5:
+                                val = utils.kilogram_to_pound_weight(value)
+                            elif _type == 6:
+                                val = utils.json_to_normal(value)
+                            elif _type == 8:
+                                val = utils.kilogram_to_pound_mass(value)
+                            elif _type == 9:
+                                val = value
+                            elif _type == 10:
+                                val = value
+                            elif _type == 11:
+                                val = value
+                            elif _type == 12:
+                                val = utils.celsius_to_fahrenheit(value)
+                            elif _type == 54:
+                                val = value
+                            elif _type == 71:
+                                val = utils.celsius_to_fahrenheit(value)
+                            elif _type == 73:
+                                val = utils.celsius_to_fahrenheit(value)
+                            elif _type == 76:
+                                val = utils.kilogram_to_pound_mass(value)
+                            elif _type == 77:
+                                val = utils.kilogram_to_pound_weight(value)
+                            elif _type == 88:
+                                val = utils.kilogram_to_pound_mass(value)
+                            elif _type == 91:
+                                val = value
+                            else:
+                                val = 0
+                            if self.nodes[node_address]:
+                                self.nodes[node_address].setDriver('ST', val)
+
+            activities = withings.get_activities()
+            if activities is not None:
+                for body in activities['body']['activities']:
+                    for act in body:
+                        if act in self.activities_map:
+                            act_label = self.activities_map[act]
+                            node_address = parent_address + str(act).replace('_', '')[:8].lower()
+                            value = body[act]
+                            if act == 'steps':
+                                val = value
+                            elif act == 'distance':
+                                val = utils.meters_to_mile(value)
+                            elif act == 'elevation':
+                                val = value
+                            elif act == 'soft':
+                                val = utils.seconds_to_minutes(value)
+                            elif act == 'moderate':
+                                val = utils.seconds_to_minutes(value)
+                            elif act == 'intense':
+                                val = utils.seconds_to_minutes(value)
+                            elif act == 'active':
+                                val = utils.seconds_to_minutes(value)
+                            elif act == 'calories':
+                                val = round(value, 2)
+                            elif act == 'totalcalories':
+                                val = round(value, 2)
+                            elif act == 'hr_average':
+                                val = value
+                            elif act == 'hr_min':
+                                val = value
+                            elif act == 'hr_max':
+                                val = value
+                            elif act == 'hr_zone_0':
+                                val = utils.seconds_to_minutes(value)
+                            elif act == 'hr_zone_1':
+                                val = utils.seconds_to_minutes(value)
+                            elif act == 'hr_zone_2':
+                                val = utils.seconds_to_minutes(value)
+                            elif act == 'hr_zone_3':
+                                val = utils.seconds_to_minutes(value)
+                            else:
+                                val = 0
+
+                            if self.nodes[node_address]:
+                                self.nodes[node_address].setDriver('ST', val)
 
     def delete(self):
         LOGGER.info('Removing Withings Nodeserver')

@@ -419,4 +419,40 @@
             <accepts />
         </cmds>
     </nodeDef>
+
+<!--    Consolidated Nodes-->
+    <nodeDef id="WITHINGS_SCALE" nls="SCALE">
+        <editors />
+        <sts>
+            <st id="BATLVL" editor="_51_1" /> <!--Battery -->
+            <st id="ST" editor="_52_1" />   <!--Weight -->
+            <st id="GV0" editor="_52_1" />  <!--Muscle Mass -->
+            <st id="GV1" editor="_52_1" />  <!--Bone Mass -->
+            <st id="GV2" editor="_52_1" />  <!--Fat Mass -->
+            <st id="GV3" editor="_52_1" />  <!--Fat Free Mass -->
+            <st id="GV4" editor="_52_1" />  <!--Fat Ratio -->
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
+
+    <nodeDef id="WITHINGS_SCALE_HR" nls="SCALE_HR">
+        <editors />
+        <sts>
+            <st id="BATLVL" editor="_51_1" /> <!--Battery -->
+            <st id="ST" editor="_52_1" />   <!--Weight -->
+            <st id="GV0" editor="_52_1" />  <!--Muscle Mass -->
+            <st id="GV1" editor="_52_1" />  <!--Bone Mass -->
+            <st id="GV2" editor="_52_1" />  <!--Fat Mass -->
+            <st id="GV3" editor="_52_1" />  <!--Fat Free Mass -->
+            <st id="GV4" editor="_52_1" />  <!--Fat Ratio -->
+            <st id="GV5" editor="_56_1" />  <!--Heart Rate -->
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
 </nodeDefs>
