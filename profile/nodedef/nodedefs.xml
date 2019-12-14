@@ -492,4 +492,41 @@
             <accepts />
         </cmds>
     </nodeDef>
+
+    <nodeDef id="WITHINGS_ACTIVITY_SLEEP" nls="ACTSLEEP">
+        <editors />
+        <sts>
+            <st id="ST" editor="_56_1" />           <!-- Sleep Score -->
+            <st id="GV0" editor="_45_1" />          <!-- Light Sleep Duration -->
+            <st id="GV1" editor="_45_1" />          <!-- Deep Sleep Duration -->
+            <st id="GV2" editor="_56_1" />          <!-- Wakeup Count -->
+            <st id="GV3" editor="_45_1" />          <!-- Wakeup Duration -->
+            <st id="GV4" editor="_45_1" />          <!-- Duration to Sleep -->
+            <st id="GV5" editor="_45_1" />          <!-- Duration to Wakeup -->
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
+
+    <nodeDef id="WITHINGS_ACTIVITY_SLEEP_HR" nls="ACTSLEEPHR">
+        <editors />
+        <sts>
+            <st id="ST" editor="_56_1" />           <!-- Sleep Score -->
+            <st id="GV0" editor="_45_1" />          <!-- Light Sleep Duration -->
+            <st id="GV1" editor="_45_1" />          <!-- Deep Sleep Duration -->
+            <st id="GV2" editor="_56_1" />          <!-- Wakeup Count -->
+            <st id="GV3" editor="_45_1" />          <!-- Wakeup Duration -->
+            <st id="GV4" editor="_45_1" />          <!-- Duration to Sleep -->
+            <st id="GV5" editor="_45_1" />          <!-- Duration to Wakeup -->
+            <st id="GV6" editor="_56_1" />          <!-- HR Average -->
+            <st id="GV7" editor="_56_1" />          <!-- HR Min -->
+            <st id="GV8" editor="_56_1" />          <!-- HR Max -->
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
 </nodeDefs>

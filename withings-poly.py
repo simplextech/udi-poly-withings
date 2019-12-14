@@ -311,6 +311,7 @@ class Controller(polyinterface.Controller):
             devices = withings.get_devices()
             measures = withings.get_measure()
             activities = withings.get_activities()
+            sleep = withings.get_sleep_summary()
 
             if devices is not None:
                 for dev in devices['body']['devices']:
@@ -337,10 +338,16 @@ class Controller(polyinterface.Controller):
                             time.sleep(2)
                             self.addNode(WithingsActivityTrackerHRNode(self, parent_address, node_address + "hr",
                                                                        node_name + " HR", devices, activities))
+                            time.sleep(2)
+                            self.addNode(WithingsActivityTrackerSleepHRNode(self, parent_address, node_address + "hrsl",
+                                                                            node_name + " Sleep", devices, sleep))
                             # Add Node for Heart Rate Metrics/Information
                         else:
                             self.addNode(WithingsActivityTrackerNode(self, parent_address, node_address,
                                                                      node_name, devices, activities))
+                            time.sleep(2)
+                            self.addNode(WithingsActivityTrackerSleepNode(self, parent_address, node_address + "sl",
+                                                                          node_name + " Sleep", devices, sleep))
 
                 # Create Measurement Nodes
                 # measures = withings.get_measure()

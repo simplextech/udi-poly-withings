@@ -72,3 +72,17 @@ class Withings:
         else:
             LOGGER.error("Withings.get_measure is None")
             return None
+
+    def get_sleep_summary(self):
+        url = "https://wbsapi.withings.net/v2/sleep"
+        payload = {"action": "getsummary", "lastupdate": last_update(),
+                   "data_fields": "breathing_disturbances_intensity,deepsleepduration,durationtosleep,"
+                                  "durationtowakeup,hr_average,hr_max,hr_min,lightsleepduration,remsleepduration,"
+                                  "rr_average,rr_max,rr_min,sleep_score,snoring,snoringepisodecount,"
+                                  "wakeupcount,wakeupduration"}
+
+        resp = get_request(url, self.headers, payload)
+        if resp is not None:
+            return resp
+        else:
+            LOGGER.error("Withings.get_sleep_summary is None")

@@ -134,3 +134,125 @@ class WithingsActivityTrackerHRNode(polyinterface.Node):
     commands = {
         # 'DON': setOn, 'DOF': setOff
     }
+
+
+class WithingsActivityTrackerSleepNode(polyinterface.Node):
+    def __init__(self, controller, primary, address, name, devices, sleep):
+        super(WithingsActivityTrackerSleepNode, self).__init__(controller, primary, address, name)
+        self.devices = devices
+        self.sleep = sleep
+
+    def start(self):
+        if self.sleep is not None:
+            for series in self.sleep['body']['series']:
+                model = series['model']
+                if model == 16:
+                    for entry in series['data']:
+                        print(entry)
+                        value = series['data'][entry]
+                        if entry == "sleep_score":
+                            val = value
+                            self.setDriver('ST', val)
+                        if entry == "lightsleepduration":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV0', val)
+                        if entry == "deepsleepduration":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV1', val)
+                        if entry == "wakeupcount":
+                            val = value
+                            self.setDriver('GV2', val)
+                        if entry == "wakeupduration":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV3', val)
+                        if entry == "durationtosleep":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV4', val)
+                        if entry == "durationtowakeup":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV5', val)
+
+    # "Hints See: https://github.com/UniversalDevicesInc/hints"
+    # hint = [1, 2, 3, 4]
+
+    id = 'WITHINGS_ACTIVITY_SLEEP'
+
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 56},
+               {'driver': 'GV0', 'value': 0, 'uom': 45},
+               {'driver': 'GV1', 'value': 0, 'uom': 45},
+               {'driver': 'GV2', 'value': 0, 'uom': 56},
+               {'driver': 'GV3', 'value': 0, 'uom': 45},
+               {'driver': 'GV4', 'value': 0, 'uom': 45},
+               {'driver': 'GV5', 'value': 0, 'uom': 45}
+               ]
+
+    commands = {
+        # 'DON': setOn, 'DOF': setOff
+    }
+
+
+class WithingsActivityTrackerSleepHRNode(polyinterface.Node):
+    def __init__(self, controller, primary, address, name, devices, sleep):
+        super(WithingsActivityTrackerSleepHRNode, self).__init__(controller, primary, address, name)
+        self.devices = devices
+        self.sleep = sleep
+
+    def start(self):
+        if self.sleep is not None:
+            for series in self.sleep['body']['series']:
+                model = series['model']
+                if model == 16:
+                    for entry in series['data']:
+                        print(entry)
+                        value = series['data'][entry]
+                        if entry == "sleep_score":
+                            val = value
+                            self.setDriver('ST', val)
+                        if entry == "lightsleepduration":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV0', val)
+                        if entry == "deepsleepduration":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV1', val)
+                        if entry == "wakeupcount":
+                            val = value
+                            self.setDriver('GV2', val)
+                        if entry == "wakeupduration":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV3', val)
+                        if entry == "durationtosleep":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV4', val)
+                        if entry == "durationtowakeup":
+                            val = utils.seconds_to_minutes(value)
+                            self.setDriver('GV5', val)
+                        if entry == "hr_average":
+                            val = value
+                            self.setDriver('GV6', val)
+                        if entry == "hr_min":
+                            val = value
+                            self.setDriver('GV7', val)
+                        if entry == "hr_max":
+                            val = value
+                            self.setDriver('GV8', val)
+
+    # "Hints See: https://github.com/UniversalDevicesInc/hints"
+    # hint = [1, 2, 3, 4]
+
+    id = 'WITHINGS_ACTIVITY_SLEEP_HR'
+
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 56},
+               {'driver': 'GV0', 'value': 0, 'uom': 45},
+               {'driver': 'GV1', 'value': 0, 'uom': 45},
+               {'driver': 'GV2', 'value': 0, 'uom': 56},
+               {'driver': 'GV3', 'value': 0, 'uom': 45},
+               {'driver': 'GV4', 'value': 0, 'uom': 45},
+               {'driver': 'GV5', 'value': 0, 'uom': 45},
+               {'driver': 'GV6', 'value': 0, 'uom': 56},
+               {'driver': 'GV7', 'value': 0, 'uom': 56},
+               {'driver': 'GV8', 'value': 0, 'uom': 56}
+               ]
+
+    commands = {
+        # 'DON': setOn, 'DOF': setOff
+    }
