@@ -490,6 +490,7 @@ class Controller(polyinterface.Controller):
                 if self.nodes[node].address != "controller":
                     if self.nodes[node].address != parent_address:
                         self.nodes[node].query(command=[devices, measures, activities, sleep])
+                        time.sleep(2)
 
             # devices = withings.get_devices()
             # if devices is not None:
