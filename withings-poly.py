@@ -303,7 +303,7 @@ class Controller(polyinterface.Controller):
         self.refresh_token()
 
     def query(self, command=None):
-        self.check_params()
+        # self.check_params()
         for node in self.nodes:
             self.nodes[node].reportDrivers()
 
