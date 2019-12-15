@@ -7,13 +7,13 @@
     "description": "DO NOT INSTALL IN DEVELOPMENT: Withings Healthmate Nodeserver",
     "notice": "Under Development do not use",
     "shortPoll": "120",
-    "longPoll": "240",
+    "longPoll": "3600",
     "testMode": true,
     "profile_version": "0.0.2",
     "httpsIngress": true,
     "credits": [
         {
-            "title": "Withings: Healthmate integration Nodeserver",
+            "title": "Withings Healthmate integration Nodeserver",
             "author": "Simplex Technology",
             "version": "0.0.1",
             "date": "December 4, 2019",

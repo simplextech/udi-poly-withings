@@ -186,12 +186,15 @@ class Controller(polyinterface.Controller):
         if 'code' in oauth:
             if self.get_token(oauth['code']):
                 LOGGER.info("Withings OAuth Successful")
+                self.discover()
             else:
                 LOGGER.warn("Withings OAuth Failed")
         else:
             print(oauth)
 
     def get_token(self, code):
+        _state = None
+
         _token_url = "https://account.withings.com/oauth2/token"
 
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -228,14 +231,22 @@ class Controller(polyinterface.Controller):
                     # print("Get Token End----------------------------------")
 
                     self.saveCustomData(custom_data)
-
+                    _state = True
                     return True
                 except KeyError as ex:
                     LOGGER.error("get_token Error: " + str(ex))
             else:
+                _state = False
                 return False
         except requests.exceptions.RequestException as e:
             LOGGER.error("Error: " + str(e))
+
+        if _state:
+            # print("---------------refresh  New Custom Data -----------------------")
+            # print(custom_data)
+            return True
+        else:
+            return False
 
     def refresh_token(self):
         _state = None
@@ -302,7 +313,8 @@ class Controller(polyinterface.Controller):
             access_token = custom_data[user_id]['access_token']
             withings = Withings(access_token)
             # parent_address = str(user_id)[-3:] + "_"
-            parent_address = str(user_id)[-6:]
+            user_address = str(user_id).replace('0', '')[-3:]
+            parent_address = user_address
 
             # Create User ID Parent Nodes
             self.addNode(WithingsParentNode(self, parent_address, parent_address, "Withings User " + str(user_id)))
@@ -317,9 +329,9 @@ class Controller(polyinterface.Controller):
                 for dev in devices['body']['devices']:
                     node_name = dev['type']
                     dev_type = dev['type']
-                    battery = dev['battery']
+                    # battery = dev['battery']
                     model_id = dev['model_id']
-                    node_address = dev['deviceid'][-6:].lower() + "_" + str(model_id)
+                    node_address = user_address + dev['deviceid'][-3:].lower() + "_" + str(model_id)
 
                     if dev_type == "Scale":
                         if model_id == 6:
@@ -341,13 +353,14 @@ class Controller(polyinterface.Controller):
                             time.sleep(2)
                             self.addNode(WithingsActivityTrackerSleepHRNode(self, parent_address, node_address + "hrsl",
                                                                             node_name + " Sleep", devices, sleep))
-                            # Add Node for Heart Rate Metrics/Information
                         else:
                             self.addNode(WithingsActivityTrackerNode(self, parent_address, node_address,
                                                                      node_name, devices, activities))
                             time.sleep(2)
                             self.addNode(WithingsActivityTrackerSleepNode(self, parent_address, node_address + "sl",
                                                                           node_name + " Sleep", devices, sleep))
+
+        self.disco = 1
 
                 # Create Measurement Nodes
                 # measures = withings.get_measure()
@@ -452,114 +465,127 @@ class Controller(polyinterface.Controller):
             access_token = custom_data[user_id]['access_token']
             user = custom_data[user_id]['user_id']
             withings = Withings(access_token)
-            parent_address = str(user)[-3:]
+            # parent_address = str(user_id)[-6:]
+            parent_address = str(user_id).replace('0', '')[-3:]
 
             devices = withings.get_devices()
-            if devices is not None:
-                for dev in devices['body']['devices']:
-                    value = dev['battery']
-                    if value == "low":
-                        battery = 1
-                    elif value == "medium":
-                        battery = 2
-                    elif value == "high":
-                        battery = 3
-                    else:
-                        battery = 0
-
-                    node_address = dev['deviceid'][-6:].lower()
-                    self.nodes[node_address].setDriver('ST', battery)
-
             measures = withings.get_measure()
-            if measures is not None:
-                for body in measures['body']['measuregrps']:
-                    for measure in body['measures']:
-                        _type = measure['type']
-                        if _type in self.measure_type_map:
-                            node_address = parent_address + str(_type).lower()
-                            value = measure['value']
-                            if _type == 1:
-                                val = utils.kilogram_to_pound_weight(value)
-                            elif _type == 4:
-                                val = utils.meters_to_feet(value)
-                            elif _type == 5:
-                                val = utils.kilogram_to_pound_weight(value)
-                            elif _type == 6:
-                                val = utils.json_to_normal(value)
-                            elif _type == 8:
-                                val = utils.kilogram_to_pound_mass(value)
-                            elif _type == 9:
-                                val = value
-                            elif _type == 10:
-                                val = value
-                            elif _type == 11:
-                                val = value
-                            elif _type == 12:
-                                val = utils.celsius_to_fahrenheit(value)
-                            elif _type == 54:
-                                val = value
-                            elif _type == 71:
-                                val = utils.celsius_to_fahrenheit(value)
-                            elif _type == 73:
-                                val = utils.celsius_to_fahrenheit(value)
-                            elif _type == 76:
-                                val = utils.kilogram_to_pound_mass(value)
-                            elif _type == 77:
-                                val = utils.kilogram_to_pound_weight(value)
-                            elif _type == 88:
-                                val = utils.kilogram_to_pound_mass(value)
-                            elif _type == 91:
-                                val = value
-                            else:
-                                val = 0
-                            if self.nodes[node_address]:
-                                self.nodes[node_address].setDriver('ST', val)
-
             activities = withings.get_activities()
-            if activities is not None:
-                for body in activities['body']['activities']:
-                    for act in body:
-                        if act in self.activities_map:
-                            act_label = self.activities_map[act]
-                            node_address = parent_address + str(act).replace('_', '')[:8].lower()
-                            value = body[act]
-                            if act == 'steps':
-                                val = value
-                            elif act == 'distance':
-                                val = utils.meters_to_mile(value)
-                            elif act == 'elevation':
-                                val = value
-                            elif act == 'soft':
-                                val = utils.seconds_to_minutes(value)
-                            elif act == 'moderate':
-                                val = utils.seconds_to_minutes(value)
-                            elif act == 'intense':
-                                val = utils.seconds_to_minutes(value)
-                            elif act == 'active':
-                                val = utils.seconds_to_minutes(value)
-                            elif act == 'calories':
-                                val = round(value, 2)
-                            elif act == 'totalcalories':
-                                val = round(value, 2)
-                            elif act == 'hr_average':
-                                val = value
-                            elif act == 'hr_min':
-                                val = value
-                            elif act == 'hr_max':
-                                val = value
-                            elif act == 'hr_zone_0':
-                                val = utils.seconds_to_minutes(value)
-                            elif act == 'hr_zone_1':
-                                val = utils.seconds_to_minutes(value)
-                            elif act == 'hr_zone_2':
-                                val = utils.seconds_to_minutes(value)
-                            elif act == 'hr_zone_3':
-                                val = utils.seconds_to_minutes(value)
-                            else:
-                                val = 0
+            sleep = withings.get_sleep_summary()
 
-                            if self.nodes[node_address]:
-                                self.nodes[node_address].setDriver('ST', val)
+            print("User: " + str(user))
+            for node in self.nodes:
+                print("Node: " + self.nodes[node].address)
+                if self.nodes[node].address != "controller":
+                    if self.nodes[node].address != parent_address:
+                        self.nodes[node].query(command=[devices, measures, activities, sleep])
+
+            # devices = withings.get_devices()
+            # if devices is not None:
+            #     for dev in devices['body']['devices']:
+            #         value = dev['battery']
+            #         if value == "low":
+            #             battery = 1
+            #         elif value == "medium":
+            #             battery = 2
+            #         elif value == "high":
+            #             battery = 3
+            #         else:
+            #             battery = 0
+            #
+            #         node_address = dev['deviceid'][-6:].lower()
+            #         self.nodes[node_address].setDriver('ST', battery)
+            #
+            # measures = withings.get_measure()
+            # if measures is not None:
+            #     for body in measures['body']['measuregrps']:
+            #         for measure in body['measures']:
+            #             _type = measure['type']
+            #             if _type in self.measure_type_map:
+            #                 node_address = parent_address + str(_type).lower()
+            #                 value = measure['value']
+            #                 if _type == 1:
+            #                     val = utils.kilogram_to_pound_weight(value)
+            #                 elif _type == 4:
+            #                     val = utils.meters_to_feet(value)
+            #                 elif _type == 5:
+            #                     val = utils.kilogram_to_pound_weight(value)
+            #                 elif _type == 6:
+            #                     val = utils.json_to_normal(value)
+            #                 elif _type == 8:
+            #                     val = utils.kilogram_to_pound_mass(value)
+            #                 elif _type == 9:
+            #                     val = value
+            #                 elif _type == 10:
+            #                     val = value
+            #                 elif _type == 11:
+            #                     val = value
+            #                 elif _type == 12:
+            #                     val = utils.celsius_to_fahrenheit(value)
+            #                 elif _type == 54:
+            #                     val = value
+            #                 elif _type == 71:
+            #                     val = utils.celsius_to_fahrenheit(value)
+            #                 elif _type == 73:
+            #                     val = utils.celsius_to_fahrenheit(value)
+            #                 elif _type == 76:
+            #                     val = utils.kilogram_to_pound_mass(value)
+            #                 elif _type == 77:
+            #                     val = utils.kilogram_to_pound_weight(value)
+            #                 elif _type == 88:
+            #                     val = utils.kilogram_to_pound_mass(value)
+            #                 elif _type == 91:
+            #                     val = value
+            #                 else:
+            #                     val = 0
+            #                 if self.nodes[node_address]:
+            #                     self.nodes[node_address].setDriver('ST', val)
+            #
+            # activities = withings.get_activities()
+            # if activities is not None:
+            #     for body in activities['body']['activities']:
+            #         for act in body:
+            #             if act in self.activities_map:
+            #                 act_label = self.activities_map[act]
+            #                 node_address = parent_address + str(act).replace('_', '')[:8].lower()
+            #                 value = body[act]
+            #                 if act == 'steps':
+            #                     val = value
+            #                 elif act == 'distance':
+            #                     val = utils.meters_to_mile(value)
+            #                 elif act == 'elevation':
+            #                     val = value
+            #                 elif act == 'soft':
+            #                     val = utils.seconds_to_minutes(value)
+            #                 elif act == 'moderate':
+            #                     val = utils.seconds_to_minutes(value)
+            #                 elif act == 'intense':
+            #                     val = utils.seconds_to_minutes(value)
+            #                 elif act == 'active':
+            #                     val = utils.seconds_to_minutes(value)
+            #                 elif act == 'calories':
+            #                     val = round(value, 2)
+            #                 elif act == 'totalcalories':
+            #                     val = round(value, 2)
+            #                 elif act == 'hr_average':
+            #                     val = value
+            #                 elif act == 'hr_min':
+            #                     val = value
+            #                 elif act == 'hr_max':
+            #                     val = value
+            #                 elif act == 'hr_zone_0':
+            #                     val = utils.seconds_to_minutes(value)
+            #                 elif act == 'hr_zone_1':
+            #                     val = utils.seconds_to_minutes(value)
+            #                 elif act == 'hr_zone_2':
+            #                     val = utils.seconds_to_minutes(value)
+            #                 elif act == 'hr_zone_3':
+            #                     val = utils.seconds_to_minutes(value)
+            #                 else:
+            #                     val = 0
+            #
+            #                 if self.nodes[node_address]:
+            #                     self.nodes[node_address].setDriver('ST', val)
 
     def delete(self):
         LOGGER.info('Removing Withings Nodeserver')

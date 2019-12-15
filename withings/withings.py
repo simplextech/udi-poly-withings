@@ -51,7 +51,7 @@ class Withings:
 
     def get_measure(self):
         url = "https://wbsapi.withings.net/measure"
-        payload = {"action": "getmeas", "lastupdate": last_update()}
+        payload = {"action": "getmeas", "lastupdate": last_update(), "offset": 2}
 
         resp = get_request(url, self.headers, payload)
         if resp is not None:
@@ -62,7 +62,7 @@ class Withings:
 
     def get_activities(self):
         url = "https://wbsapi.withings.net/v2/measure"
-        payload = {"action": "getactivity", "lastupdate": last_update(),
+        payload = {"action": "getactivity", "lastupdate": last_update(), "offset": 2,
                    "data_fields": "steps,distance,elevation,soft,moderate,intense,active,calories,"
                                   "totalcalories,hr_average,hr_min,hr_max,hr_zone_0,hr_zone_1,hr_zone_2,hr_zone_3"}
 
@@ -75,7 +75,7 @@ class Withings:
 
     def get_sleep_summary(self):
         url = "https://wbsapi.withings.net/v2/sleep"
-        payload = {"action": "getsummary", "lastupdate": last_update(),
+        payload = {"action": "getsummary", "lastupdate": last_update(), "offset": 1,
                    "data_fields": "breathing_disturbances_intensity,deepsleepduration,durationtosleep,"
                                   "durationtowakeup,hr_average,hr_max,hr_min,lightsleepduration,remsleepduration,"
                                   "rr_average,rr_max,rr_min,sleep_score,snoring,snoringepisodecount,"

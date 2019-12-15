@@ -58,11 +58,16 @@ class WithingsScaleNode(polyinterface.Node):
                         self.setDriver('GV5', val)
 
     def query(self, command=None):
-        self.reportDrivers()
+        # command = [devices, measures, activities, sleep]
+        if command is not None:
+            self.devices = command[0]
+            self.measures = command[1]
+            self.start()
+        else:
+            self.reportDrivers()
 
     # "Hints See: https://github.com/UniversalDevicesInc/hints"
     # hint = [1, 2, 3, 4]
-
 
     id = 'WITHINGS_SCALE'
     drivers = [{'driver': 'ST', 'value': 0, 'uom': 52},

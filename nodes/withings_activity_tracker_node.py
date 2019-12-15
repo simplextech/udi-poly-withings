@@ -18,7 +18,7 @@ class WithingsActivityTrackerNode(polyinterface.Node):
     def start(self):
         if self.devices is not None:
             for dev in self.devices['body']['devices']:
-                if dev['type'] == "Scale":
+                if dev['type'] == "Activity Tracker":
                     value = dev['battery']
                     if value == "low":
                         battery = 1
@@ -62,11 +62,30 @@ class WithingsActivityTrackerNode(polyinterface.Node):
                         val = round(value, 2)
                         self.setDriver('GV7', val)
 
+    def query(self, command=None):
+        # command = [devices, measures, activities, sleep]
+        if command is not None:
+            self.devices = command[0]
+            self.activities = command[2]
+            self.start()
+        else:
+            self.reportDrivers()
     # "Hints See: https://github.com/UniversalDevicesInc/hints"
     # hint = [1, 2, 3, 4]
 
     id = 'WITHINGS_ACTIVITY'
 
+    '''
+    ST:     Steps
+    GV0:    Distance
+    GV1:    Elevation (floors)
+    GV2:    Soft/Light Activity
+    GV3:    Moderate Activity
+    GV4:    Intense Activity
+    GV5:    Sum Mod/Int Activity
+    GV6:    Calories Burned
+    GV7:    Total Calories Burned (Resting + Active)
+    '''
     drivers = [{'driver': 'ST', 'value': 0, 'uom': 56},
                {'driver': 'BATLVL', 'value': 0, 'uom': 25},
                {'driver': 'GV0', 'value': 0, 'uom': 116},
@@ -117,6 +136,15 @@ class WithingsActivityTrackerHRNode(polyinterface.Node):
                         val = utils.seconds_to_minutes(value)
                         self.setDriver('GV5', val)
 
+    def query(self, command=None):
+        # command = [devices, measures, activities, sleep]
+        if command is not None:
+            self.devices = command[0]
+            self.activities = command[2]
+            self.start()
+        else:
+            self.reportDrivers()
+
     # "Hints See: https://github.com/UniversalDevicesInc/hints"
     # hint = [1, 2, 3, 4]
 
@@ -148,7 +176,6 @@ class WithingsActivityTrackerSleepNode(polyinterface.Node):
                 model = series['model']
                 if model == 16:
                     for entry in series['data']:
-                        print(entry)
                         value = series['data'][entry]
                         if entry == "sleep_score":
                             val = value
@@ -171,6 +198,15 @@ class WithingsActivityTrackerSleepNode(polyinterface.Node):
                         if entry == "durationtowakeup":
                             val = utils.seconds_to_minutes(value)
                             self.setDriver('GV5', val)
+
+    def query(self, command=None):
+        # command = [devices, measures, activities, sleep]
+        if command is not None:
+            self.devices = command[0]
+            self.sleep = command[3]
+            self.start()
+        else:
+            self.reportDrivers()
 
     # "Hints See: https://github.com/UniversalDevicesInc/hints"
     # hint = [1, 2, 3, 4]
@@ -203,7 +239,6 @@ class WithingsActivityTrackerSleepHRNode(polyinterface.Node):
                 model = series['model']
                 if model == 16:
                     for entry in series['data']:
-                        print(entry)
                         value = series['data'][entry]
                         if entry == "sleep_score":
                             val = value
@@ -235,6 +270,15 @@ class WithingsActivityTrackerSleepHRNode(polyinterface.Node):
                         if entry == "hr_max":
                             val = value
                             self.setDriver('GV8', val)
+
+    def query(self, command=None):
+        # command = [devices, measures, activities, sleep]
+        if command is not None:
+            self.devices = command[0]
+            self.sleep = command[3]
+            self.start()
+        else:
+            self.reportDrivers()
 
     # "Hints See: https://github.com/UniversalDevicesInc/hints"
     # hint = [1, 2, 3, 4]
