@@ -337,9 +337,11 @@ class Controller(polyinterface.Controller):
                         if model_id == 6:
                             self.addNode(WithingsScaleHRNode(self, parent_address, node_address,
                                                              node_name, devices, measures))
+                            time.sleep(2)
                         else:
                             self.addNode(WithingsScaleNode(self, parent_address, node_address,
                                                            node_name, devices, measures))
+                            time.sleep(2)
                     # self.addNode(WithingsDeviceNode(self, parent_address, node_address, node_name, battery))
                     time.sleep(1)
 
@@ -353,12 +355,14 @@ class Controller(polyinterface.Controller):
                             time.sleep(2)
                             self.addNode(WithingsActivityTrackerSleepHRNode(self, parent_address, node_address + "hrsl",
                                                                             node_name + " Sleep", devices, sleep))
+                            time.sleep(2)
                         else:
                             self.addNode(WithingsActivityTrackerNode(self, parent_address, node_address,
                                                                      node_name, devices, activities))
                             time.sleep(2)
                             self.addNode(WithingsActivityTrackerSleepNode(self, parent_address, node_address + "sl",
                                                                           node_name + " Sleep", devices, sleep))
+                            time.sleep(2)
 
         self.disco = 1
 
