@@ -51,7 +51,7 @@ class Withings:
 
     def get_measure(self):
         url = "https://wbsapi.withings.net/measure"
-        payload = {"action": "getmeas", "lastupdate": last_update(), "offset": 2}
+        payload = {"action": "getmeas", "lastupdate": last_update(), "offset": 1}
 
         resp = get_request(url, self.headers, payload)
         if resp is not None:
