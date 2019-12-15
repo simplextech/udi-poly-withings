@@ -477,7 +477,6 @@ class Controller(polyinterface.Controller):
             access_token = custom_data[user_id]['access_token']
             user = custom_data[user_id]['user_id']
             withings = Withings(access_token)
-            # parent_address = str(user_id)[-6:]
             parent_address = str(user_id).replace('0', '')[-3:]
 
             devices = withings.get_devices()
