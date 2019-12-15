@@ -430,7 +430,7 @@
             <st id="GV1" editor="_52_1" />  <!--Bone Mass -->
             <st id="GV2" editor="_52_1" />  <!--Fat Mass -->
             <st id="GV3" editor="_52_1" />  <!--Fat Free Mass -->
-            <st id="GV4" editor="_52_1" />  <!--Fat Ratio -->
+            <st id="GV4" editor="_51_1" />  <!--Fat Ratio -->
         </sts>
         <cmds>
             <sends />
