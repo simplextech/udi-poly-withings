@@ -347,21 +347,29 @@ class Controller(polyinterface.Controller):
 
                     if dev_type == "Activity Tracker":
                         if model_id == 59:
-                            self.addNode(WithingsActivityTrackerNode(self, parent_address, node_address,
-                                                                     node_name, devices, activities))
+                            self.addNode(
+                                WithingsActivityTrackerNode(
+                                    self, parent_address, node_address, node_name, devices, activities))
                             time.sleep(2)
-                            self.addNode(WithingsActivityTrackerHRNode(self, parent_address, node_address + "hr",
-                                                                       node_name + " HR", devices, activities))
+
+                            self.addNode(
+                                WithingsActivityTrackerHRNode(
+                                    self, parent_address, node_address + "hr", node_name + " HR", devices, activities))
                             time.sleep(2)
-                            self.addNode(WithingsActivityTrackerSleepHRNode(self, parent_address, node_address + "hrsl",
-                                                                            node_name + " Sleep", devices, sleep))
+
+                            self.addNode(
+                                WithingsActivityTrackerSleepHRNode(
+                                    self, parent_address, node_address + "hrsl", node_name + " Sleep", devices, sleep))
                             time.sleep(2)
                         else:
-                            self.addNode(WithingsActivityTrackerNode(self, parent_address, node_address,
-                                                                     node_name, devices, activities))
+                            self.addNode(
+                                WithingsActivityTrackerNode(
+                                    self, parent_address, node_address, node_name, devices, activities))
                             time.sleep(2)
-                            self.addNode(WithingsActivityTrackerSleepNode(self, parent_address, node_address + "sl",
-                                                                          node_name + " Sleep", devices, sleep))
+
+                            self.addNode(
+                                WithingsActivityTrackerSleepNode(
+                                    self, parent_address, node_address + "sl", node_name + " Sleep", devices, sleep))
                             time.sleep(2)
 
         self.disco = 1
