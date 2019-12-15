@@ -62,7 +62,7 @@ class Withings:
 
     def get_activities(self):
         url = "https://wbsapi.withings.net/v2/measure"
-        payload = {"action": "getactivity", "lastupdate": last_update(), "offset": 2,
+        payload = {"action": "getactivity", "lastupdate": last_update(), "offset": 1,
                    "data_fields": "steps,distance,elevation,soft,moderate,intense,active,calories,"
                                   "totalcalories,hr_average,hr_min,hr_max,hr_zone_0,hr_zone_1,hr_zone_2,hr_zone_3"}
 
