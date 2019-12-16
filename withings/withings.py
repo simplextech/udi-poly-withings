@@ -22,6 +22,7 @@ def get_request(url, headers, payload):
         r = requests.post(url, headers=headers, data=payload)
         if r.status_code == requests.codes.ok:
             resp = r.json()
+            print(resp)
             return resp
         else:
             LOGGER.error("Withings.get_request:  " + r.json())
@@ -75,7 +76,7 @@ class Withings:
 
     def get_sleep_summary(self):
         url = "https://wbsapi.withings.net/v2/sleep"
-        payload = {"action": "getsummary", "lastupdate": last_update(), "offset": 1,
+        payload = {"action": "getsummary", "lastupdate": last_update(),
                    "data_fields": "breathing_disturbances_intensity,deepsleepduration,durationtosleep,"
                                   "durationtowakeup,hr_average,hr_max,hr_min,lightsleepduration,remsleepduration,"
                                   "rr_average,rr_max,rr_min,sleep_score,snoring,snoringepisodecount,"

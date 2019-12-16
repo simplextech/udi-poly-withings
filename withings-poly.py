@@ -331,7 +331,8 @@ class Controller(polyinterface.Controller):
                     dev_type = dev['type']
                     # battery = dev['battery']
                     model_id = dev['model_id']
-                    node_address = user_address + dev['deviceid'][-3:].lower() + "_" + str(model_id)
+                    # node_address = user_address + dev['deviceid'][-3:].lower() + "_" + str(model_id)
+                    node_address = user_address + dev['deviceid'][-3:].lower()
 
                     if dev_type == "Scale":
                         if model_id == 6:
@@ -349,28 +350,39 @@ class Controller(polyinterface.Controller):
                         if model_id == 59:
                             self.addNode(
                                 WithingsActivityTrackerNode(
-                                    self, parent_address, node_address, node_name, devices, activities))
+                                    self, parent_address, node_address, node_name, devices, activities)
+                            )
                             time.sleep(2)
 
                             self.addNode(
                                 WithingsActivityTrackerHRNode(
-                                    self, parent_address, node_address + "hr", node_name + " HR", devices, activities))
+                                    self, parent_address, node_address + "hr", node_name + " HR", devices, activities)
+                            )
                             time.sleep(2)
 
                             self.addNode(
                                 WithingsActivityTrackerSleepHRNode(
-                                    self, parent_address, node_address + "hrsl", node_name + " Sleep", devices, sleep))
+                                    self, parent_address, node_address + "sl", node_name + " Sleep", devices, sleep)
+                            )
                             time.sleep(2)
                         else:
                             self.addNode(
                                 WithingsActivityTrackerNode(
-                                    self, parent_address, node_address, node_name, devices, activities))
+                                    self, parent_address, node_address, node_name, devices, activities)
+                            )
                             time.sleep(2)
 
                             self.addNode(
                                 WithingsActivityTrackerSleepNode(
-                                    self, parent_address, node_address + "sl", node_name + " Sleep", devices, sleep))
+                                    self, parent_address, node_address + "sl", node_name + " Sleep", devices, sleep)
+                            )
                             time.sleep(2)
+
+                    if dev_type == "Blood Pressure Monitor":
+                        self.addNode(
+                            WithingsBPMNode(self, parent_address, node_address, node_name, devices, measures)
+                        )
+                        time.sleep(2)
 
         self.disco = 1
 
@@ -475,22 +487,21 @@ class Controller(polyinterface.Controller):
         custom_data = self.polyConfig['customData']
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
-            user = custom_data[user_id]['user_id']
+            # user = custom_data[user_id]['user_id']
             withings = Withings(access_token)
-            parent_address = str(user_id).replace('0', '')[-3:]
+            # parent_address = str(user_id).replace('0', '')[-3:]
 
             devices = withings.get_devices()
             measures = withings.get_measure()
             activities = withings.get_activities()
             sleep = withings.get_sleep_summary()
 
-            print("User: " + str(user))
+            # print("User: " + str(user))
             for node in self.nodes:
                 print("Node: " + self.nodes[node].address)
                 if self.nodes[node].address != "controller":
-                    if self.nodes[node].address != parent_address:
-                        self.nodes[node].query(command=[devices, measures, activities, sleep])
-                        time.sleep(2)
+                    self.nodes[node].query(command=[devices, measures, activities, sleep])
+                    time.sleep(2)
 
             # devices = withings.get_devices()
             # if devices is not None:

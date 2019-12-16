@@ -1,7 +1,7 @@
 # controller
 ND-controller-NAME = Withings NodeServer Controller
 CMD-ctl-QUERY-NAME = Query
-CMD-ctl-DISCOVER-NAME = Re-Discover
+CMD-ctl-DISCOVER-NAME = Discover
 CMD-ctl-UPDATE_PROFILE-NAME = Update Profile
 CMD-ctl-REMOVE_NOTICES_ALL-NAME = Remove All Notices
 CMD-ctl-REMOVE_NOTICE_TEST-NAME = Remove Notice Test
@@ -114,3 +114,9 @@ ST-ACTSLEEPHR-GV5-NAME = Duration to Wakeup
 ST-ACTSLEEPHR-GV6-NAME = Average HR
 ST-ACTSLEEPHR-GV7-NAME = Min HR
 ST-ACTSLEEPHR-GV8-NAME = Max HR
+
+ND-WITHINGS_BPM-NAME = Blood Pressure Monitor
+ST-BPM-ST-NAME = Heart Rate
+ST-BPM-BATLVL-NAME = Battery
+ST-BPM-GV0-NAME = Systolic
+ST-BPM-GV1-NAME = Diastolic

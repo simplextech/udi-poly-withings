@@ -28,7 +28,8 @@ class WithingsParentNode(polyinterface.Node):
         self.setDriver('ST', 0)
 
     def query(self, command=None):
-        self.reportDrivers()
+        LOGGER.debug('query')
+        # self.reportDrivers()
 
     # "Hints See: https://github.com/UniversalDevicesInc/hints"
     # hint = [1, 2, 3, 4]

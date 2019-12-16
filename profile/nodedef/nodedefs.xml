@@ -447,7 +447,7 @@
             <st id="GV1" editor="_52_1" />  <!--Bone Mass -->
             <st id="GV2" editor="_52_1" />  <!--Fat Mass -->
             <st id="GV3" editor="_52_1" />  <!--Fat Free Mass -->
-            <st id="GV4" editor="_52_1" />  <!--Fat Ratio -->
+            <st id="GV4" editor="_51_1" />  <!--Fat Ratio -->
             <st id="GV5" editor="_56_1" />  <!--Heart Rate -->
         </sts>
         <cmds>
@@ -523,6 +523,20 @@
             <st id="GV6" editor="_56_1" />          <!-- HR Average -->
             <st id="GV7" editor="_56_1" />          <!-- HR Min -->
             <st id="GV8" editor="_56_1" />          <!-- HR Max -->
+        </sts>
+        <cmds>
+            <sends />
+            <accepts />
+        </cmds>
+    </nodeDef>
+
+    <nodeDef id="WITHINGS_BPM" nls="BPM">
+        <editors />
+        <sts>
+            <st id="BATLVL" editor="I_BATTERY" /> <!--Battery -->
+            <st id="ST" editor="_56_0" />   <!--Pulse -->
+            <st id="GV0" editor="_56_0" />  <!--Systolic -->
+            <st id="GV1" editor="_56_0" />  <!--Diastolic -->
         </sts>
         <cmds>
             <sends />
