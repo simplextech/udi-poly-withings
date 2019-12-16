@@ -242,61 +242,10 @@ class WithingsActivityTrackerSleepNode(polyinterface.Node):
     }
 
 
-# class WithingsActivityTrackerSleepHRNode(polyinterface.Node):
 class WithingsActivityTrackerSleepHRNode(WithingsActivityTrackerSleepNode):
     def __init__(self, controller, primary, address, name, devices, sleep):
         super(WithingsActivityTrackerSleepHRNode, self).__init__(controller, primary, address, name, devices, sleep)
-    #     self.devices = devices
-    #     self.sleep = sleep
-    #     self.user_id = None
-    #
-    # def start(self):
-    #     if self.sleep is not None:
-    #         for series in self.sleep['body']['series']:
-    #             model = series['model']
-    #             if model == 16:
-    #                 for entry in series['data']:
-    #                     value = series['data'][entry]
-    #                     if entry == "sleep_score":
-    #                         val = value
-    #                         self.setDriver('ST', val)
-    #                     if entry == "lightsleepduration":
-    #                         val = utils.seconds_to_minutes(value)
-    #                         self.setDriver('GV0', val)
-    #                     if entry == "deepsleepduration":
-    #                         val = utils.seconds_to_minutes(value)
-    #                         self.setDriver('GV1', val)
-    #                     if entry == "wakeupcount":
-    #                         val = value
-    #                         self.setDriver('GV2', val)
-    #                     if entry == "wakeupduration":
-    #                         val = utils.seconds_to_minutes(value)
-    #                         self.setDriver('GV3', val)
-    #                     if entry == "durationtosleep":
-    #                         val = utils.seconds_to_minutes(value)
-    #                         self.setDriver('GV4', val)
-    #                     if entry == "durationtowakeup":
-    #                         val = utils.seconds_to_minutes(value)
-    #                         self.setDriver('GV5', val)
-    #                     if entry == "hr_average":
-    #                         val = value
-    #                         self.setDriver('GV6', val)
-    #                     if entry == "hr_min":
-    #                         val = value
-    #                         self.setDriver('GV7', val)
-    #                     if entry == "hr_max":
-    #                         val = value
-    #                         self.setDriver('GV8', val)
-    #
-    # def query(self, command=None):
-    #     # command = [devices, measures, activities, sleep]
-    #     if command is not None:
-    #         self.devices = command[0]
-    #         self.sleep = command[3]
-    #         self.start()
-    #     else:
-    #         self.reportDrivers()
-
+    
     # "Hints See: https://github.com/UniversalDevicesInc/hints"
     # hint = [1, 2, 3, 4]
 
