@@ -243,7 +243,7 @@ class Controller(polyinterface.Controller):
             LOGGER.error("Error: " + str(e))
 
         if _state:
-            print("---------------Get Token Complete -----------------------")
+            LOGGER.debug("---------------Get Token Complete -----------------------")
             self.discover()
         else:
             return False
