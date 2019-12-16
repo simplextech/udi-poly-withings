@@ -243,9 +243,8 @@ class Controller(polyinterface.Controller):
             LOGGER.error("Error: " + str(e))
 
         if _state:
-            # print("---------------refresh  New Custom Data -----------------------")
-            # print(custom_data)
-            return True
+            print("---------------Get Token Complete -----------------------")
+            self.discover()
         else:
             return False
 
