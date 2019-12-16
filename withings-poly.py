@@ -7,6 +7,7 @@ except ImportError:
 import sys
 import time
 import requests
+import re
 # from flask import Flask
 # from flask import Response
 # import threading
@@ -303,36 +304,31 @@ class Controller(polyinterface.Controller):
         self.refresh_token()
 
     def query(self, command=None):
+        self.withings_update()
         # self.check_params()
-        for node in self.nodes:
-            self.nodes[node].reportDrivers()
+        # for node in self.nodes:
+        #     self.nodes[node].reportDrivers()
 
     def discover(self, *args, **kwargs):
         custom_data = self.polyConfig['customData']
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
             withings = Withings(access_token)
-            # parent_address = str(user_id)[-3:] + "_"
-            user_address = str(user_id).replace('0', '')[-3:]
-            parent_address = user_address
-
-            # Create User ID Parent Nodes
-            self.addNode(WithingsParentNode(self, parent_address, parent_address, "Withings User " + str(user_id)))
-            time.sleep(3)
-
             devices = withings.get_devices()
             measures = withings.get_measure()
             activities = withings.get_activities()
             sleep = withings.get_sleep_summary()
 
+            # Create User ID Parent Nodes
+            parent_address = str(user_id).replace('0', '')[-3:]
+            self.addNode(WithingsParentNode(self, parent_address, parent_address, "Withings User " + str(user_id)))
+
             if devices is not None:
                 for dev in devices['body']['devices']:
                     node_name = dev['type']
                     dev_type = dev['type']
-                    # battery = dev['battery']
                     model_id = dev['model_id']
-                    # node_address = user_address + dev['deviceid'][-3:].lower() + "_" + str(model_id)
-                    node_address = user_address + dev['deviceid'][-3:].lower()
+                    node_address = parent_address + dev['deviceid'][-3:].lower()
 
                     if dev_type == "Scale":
                         if model_id == 6:
@@ -343,8 +339,6 @@ class Controller(polyinterface.Controller):
                             self.addNode(WithingsScaleNode(self, parent_address, node_address,
                                                            node_name, devices, measures))
                             time.sleep(2)
-                    # self.addNode(WithingsDeviceNode(self, parent_address, node_address, node_name, battery))
-                    time.sleep(1)
 
                     if dev_type == "Activity Tracker":
                         if model_id == 59:
@@ -383,7 +377,7 @@ class Controller(polyinterface.Controller):
                             WithingsBPMNode(self, parent_address, node_address, node_name, devices, measures)
                         )
                         time.sleep(2)
-
+            time.sleep(3)
         self.disco = 1
 
                 # Create Measurement Nodes
@@ -487,21 +481,27 @@ class Controller(polyinterface.Controller):
         custom_data = self.polyConfig['customData']
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
-            # user = custom_data[user_id]['user_id']
+            print(user_id, access_token)
             withings = Withings(access_token)
-            # parent_address = str(user_id).replace('0', '')[-3:]
-
             devices = withings.get_devices()
             measures = withings.get_measure()
             activities = withings.get_activities()
             sleep = withings.get_sleep_summary()
 
-            # print("User: " + str(user))
+            parent_address = str(user_id).replace('0', '')[-3:]
             for node in self.nodes:
-                print("Node: " + self.nodes[node].address)
                 if self.nodes[node].address != "controller":
-                    self.nodes[node].query(command=[devices, measures, activities, sleep])
+                    pattern = '^' + parent_address
+                    node_address = self.nodes[node].address
+                    re_result = re.match(pattern, node_address)
+                    if re_result:
+                        print("Node: " + self.nodes[node].address)
+                        self.nodes[node].query(command=[devices, measures, activities, sleep])
+                    else:
+                        pass
                     time.sleep(2)
+            print("Updated: " + str(user_id))
+            time.sleep(3)
 
             # devices = withings.get_devices()
             # if devices is not None:
