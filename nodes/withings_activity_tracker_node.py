@@ -245,7 +245,7 @@ class WithingsActivityTrackerSleepNode(polyinterface.Node):
 class WithingsActivityTrackerSleepHRNode(WithingsActivityTrackerSleepNode):
     def __init__(self, controller, primary, address, name, devices, sleep):
         super(WithingsActivityTrackerSleepHRNode, self).__init__(controller, primary, address, name, devices, sleep)
-    
+
     # "Hints See: https://github.com/UniversalDevicesInc/hints"
     # hint = [1, 2, 3, 4]
 
