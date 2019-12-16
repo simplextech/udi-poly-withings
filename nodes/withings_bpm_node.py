@@ -54,13 +54,10 @@ class WithingsBPMNode(polyinterface.Node):
                             value = _value
 
                         if _type == 11:  # Heart Rate (Pulse)
-                            # val = value
                             self.setDriver('ST', value)
                         if _type == 10:  # Systolic
-                            # val = value
                             self.setDriver('GV0', value)
                         if _type == 9:  # Diastolic
-                            # val = value
                             self.setDriver('GV1', value)
 
     def query(self, command=None):
