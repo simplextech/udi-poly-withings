@@ -541,42 +541,28 @@ class CallBackServer(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
         post_data = self.rfile.read(content_length)  # <--- Gets the data itself
-        # LOGGER.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-        #              str(self.path), str(self.headers), post_data.decode('utf-8'))
-        # params = dict([p.split('=') for p in post_data.decode('utf-8').split('&')])
-        # print(params)
-        print("-----Requests-----")
-        # print(self.raw_requestline)
-        # print(self.request)
-        # print(self.requestline)
-        # print(post_data)
-        # params = parse_qsl(urlparse(self.path).params)
-        # params = parse_qsl(urlparse(self.request).query)
+        self._set_response()
 
+        print("-----Requests-----")
         params = dict([p.split('=') for p in self.path.split('&')])
-        print(params)
+
+        device_id = ""
+        appli = ""
         if 'deviceid' in params:
             print("Device ID: " + params['deviceid'])
+            device_id = params['deviceid']
         if 'appli' in params:
             print("Appli: " + params['appli'])
+            appli = params['deviceid']
 
-        self._set_response()
-        # self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
-        #
-        # content_length = int(self.headers['Content-Length'])
-        # body = self.rfile.read(content_length)
-        # self.send_response(200)
-        # self.end_headers()
-        # # response = BytesIO()
-        # # response.write(b'This is POST request. ')
-        # # response.write(b'Received: ')
-        # # response.write(body)
-        # # self.wfile.write(response.getvalue())
-        # # print(self.raw_requestline)
-        # # print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-        # #         str(self.path), str(self.headers), body.decode('utf-8'))
-        # params = dict([p.split('=') for p in body.decode('utf-8').split('&')])
-        # print(params)
+        custom_data = self.polyConfig['customData']
+        for user_id in custom_data.keys():
+            parent_address = str(user_id).replace('0', '')[-3:]
+            node_address = parent_address + device_id[-3:].lower()
+            if appli == "50":
+                control.nodes[node_address].setDriver('GV16', 1)
+            if appli == "51":
+                control.nodes[node_address].setDriver('GV16', 0)
 
 
 if __name__ == "__main__":
