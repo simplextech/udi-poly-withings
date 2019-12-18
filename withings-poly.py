@@ -170,7 +170,7 @@ class Controller(polyinterface.Controller):
     def auth_prompt(self):
         LOGGER.debug("----------- Running auth_prompt ----------------")
         _auth_url = "https://account.withings.com/oauth2_user/authorize2"
-        _scope = "user.info,user.metrics,user.activity"
+        _scope = "user.info,user.metrics,user.activity,user.sleepevents"
 
         _user_auth_url = _auth_url + \
                          "?client_id=" + self.server_data['clientId'] + \
