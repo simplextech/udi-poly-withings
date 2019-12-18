@@ -8,6 +8,10 @@
 		<range uom="25" subset="0-3" nls="I_BATTERY"/>
 	</editor>
 
+    <editor id="I_BREATHING">
+		<range uom="25" subset="0-3" nls="I_BREATHING"/>
+	</editor>
+
     <editor id="I_CLITEMP">
         <range uom="4" min="14" max="45" step="0.1" prec="1" />
         <range uom="17" min="57" max="112" step="0.1" prec="1" />

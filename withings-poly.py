@@ -376,6 +376,13 @@ class Controller(polyinterface.Controller):
                             WithingsBPMNode(self, parent_address, node_address, node_name, devices, measures)
                         )
                         time.sleep(2)
+
+                    if dev_type == "Sleep Monitor":
+                        self.addNode(
+                            WithingsSleepNode(self, parent_address, node_address, node_name, devices, sleep)
+                        )
+                        time.sleep(2)
+
             time.sleep(3)
         self.disco = 1
 
