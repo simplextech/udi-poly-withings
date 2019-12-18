@@ -563,23 +563,23 @@ class CallBackServer(BaseHTTPRequestHandler):
 
         # params = dict([p.split('=') for p in post_data.split('&')])
 
-        # device_id = ""
-        # appli = ""
-        # if 'deviceid' in params:
-        #     print("Device ID: " + params['deviceid'])
-        #     device_id = params['deviceid']
-        # if 'appli' in params:
-        #     print("Appli: " + params['appli'])
-        #     appli = params['deviceid']
-        #
-        # custom_data = self.polyConfig['customData']
-        # for user_id in custom_data.keys():
-        #     parent_address = str(user_id).replace('0', '')[-3:]
-        #     node_address = parent_address + device_id[-3:].lower()
-        #     if appli == "50":
-        #         control.nodes[node_address].setDriver('GV16', 1)
-        #     if appli == "51":
-        #         control.nodes[node_address].setDriver('GV16', 0)
+        device_id = ""
+        appli = ""
+        if 'deviceid' in post_data:
+            print("Device ID: " + post_data['deviceid'][0])
+            device_id = post_data['deviceid']
+        if 'appli' in post_data:
+            print("Appli: " + post_data['appli'][0])
+            appli = post_data['deviceid']
+
+        custom_data = self.polyConfig['customData']
+        for user_id in custom_data.keys():
+            parent_address = str(user_id).replace('0', '')[-3:]
+            node_address = parent_address + device_id[-3:].lower()
+            if appli == "50":
+                control.nodes[node_address].setDriver('GV16', 1)
+            if appli == "51":
+                control.nodes[node_address].setDriver('GV16', 0)
 
 
 if __name__ == "__main__":
