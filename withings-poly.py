@@ -488,13 +488,14 @@ class Controller(polyinterface.Controller):
         return st
 
     def bed_in_out(self, user_id, device_id, appli):
+        LOGGER.debug("Running bed_in_out")
+
         parent_address = user_id.replace('0', '')[-3:]
         node_address = parent_address + device_id[-3:].lower()
-        if appli == "50":
-            # control.nodes[node_address].setDriver('GV16', 1)
+        print("Node address: " + node_address)
+        if appli == "50" or appli == 50:
             self.nodes[node_address].setDriver('GV16', 1)
-        if appli == "51":
-            # control.nodes[node_address].setDriver('GV16', 0)
+        if appli == "51" or appli == 51:
             self.nodes[node_address].setDriver('GV16', 0)
 
     id = 'controller'
@@ -589,6 +590,7 @@ class CallBackServer(BaseHTTPRequestHandler):
                     appli = params['deviceid']
 
                     control.bed_in_out(user_id, device_id, appli)
+
                     #
                     # parent_address = user_id.replace('0', '')[-3:]
                     # node_address = parent_address + device_id[-3:].lower()
