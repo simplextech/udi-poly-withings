@@ -544,17 +544,19 @@ class CallBackServer(BaseHTTPRequestHandler):
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
-        post_data = self.rfile.read(content_length)  # <--- Gets the data itself
-        self._set_response()
+        raw_post_data = self.rfile.read(content_length)  # <--- Gets the data itself
+
 
         print("-----Requests-----")
         print(self.path)
-        data = str(post_data)
-        print("Post Data: " + data)
-
-        length = int(self.headers['Content-Length'])
-        post_data = urllib.parse.parse_qs(self.rfile.read(length).decode('utf-8'))
+        # data = str(post_data)
+        print("Post Data: " + raw_post_data.decode('utf-8'))
+        post_data = urllib.parse.parse_qs(raw_post_data.decode('utf-8'))
         print(post_data)
+        # post_data = urllib.parse.parse_qs(self.rfile.read(length).decode('utf-8'))
+
+
+        self._set_response()
         # date=1576708199&deviceid=a2c97dec4d1b2e48ff1b3367728d45d727342eb9&appli=50&userid=18418009
 
         # params = dict([p.split('=') for p in self.path.split('&')])
