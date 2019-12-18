@@ -531,6 +531,9 @@ class CallBackServer(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
+    def do_HEAD(self):
+        self._set_response()
+
     def do_GET(self):
         self.send_response(200)
         self.end_headers()
@@ -544,6 +547,8 @@ class CallBackServer(BaseHTTPRequestHandler):
         self._set_response()
 
         print("-----Requests-----")
+        print(self.path)
+        # date=1576708199&deviceid=a2c97dec4d1b2e48ff1b3367728d45d727342eb9&appli=50&userid=18418009
         params = dict([p.split('=') for p in self.path.split('&')])
 
         device_id = ""
