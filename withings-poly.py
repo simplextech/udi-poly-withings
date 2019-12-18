@@ -31,6 +31,7 @@ class Controller(polyinterface.Controller):
         self.server_data = {}
         self.access_token = None
         self.user_info = {}
+        self.ingress = None
         self.disco = 0
         self.measure_type_map = {
             1: 'Weight',
@@ -85,8 +86,9 @@ class Controller(polyinterface.Controller):
         print("httpsIngress: " + str(self.poly.init['netInfo']['httpsIngress']))
         print("publicIp: " + self.poly.init['netInfo']['publicIp'])
         print("-----------------------------------")
-        # httpd = HTTPServer(('0.0.0.0', 3000), CallBackServer)
-        # httpd.serve_forever()
+        self.ingress = self.poly.init['netInfo']['httpsIngress']
+        httpd = HTTPServer(('0.0.0.0', 3000), CallBackServer)
+        httpd.serve_forever()
 
         # cb_server = threading.Thread(name='Callback Server', target=CallBackServer.flask_server())
         # cb_server.setDaemon(True)
@@ -312,7 +314,7 @@ class Controller(polyinterface.Controller):
         custom_data = self.polyConfig['customData']
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
-            withings = Withings(access_token)
+            withings = Withings(access_token, self.ingress)
             devices = withings.get_devices()
             measures = withings.get_measure()
             activities = withings.get_activities()
@@ -381,6 +383,16 @@ class Controller(polyinterface.Controller):
                         self.addNode(
                             WithingsSleepNode(self, parent_address, node_address, node_name, devices, sleep)
                         )
+                        if withings.subscribe_bed_in():
+                            LOGGER.info("Subscribe Bed-In Success")
+                        else:
+                            LOGGER.info("Subscribe Bed-In Error")
+
+                        if withings.subscribe_bed_out():
+                            LOGGER.info("Subscribe Bed-Out Success")
+                        else:
+                            LOGGER.info("Subscribe Bed-Out Error")
+
                         time.sleep(2)
 
             time.sleep(3)
@@ -391,7 +403,7 @@ class Controller(polyinterface.Controller):
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
             print(user_id, access_token)
-            withings = Withings(access_token)
+            withings = Withings(access_token, self.ingress)
             devices = withings.get_devices()
             measures = withings.get_measure()
             activities = withings.get_activities()
@@ -520,21 +532,21 @@ class CallBackServer(BaseHTTPRequestHandler):
         LOGGER.info("=============== CallBack Server Test Line ======================")
         print(self.raw_requestline)
 
-    # def do_POST(self):
-    #     content_length = int(self.headers['Content-Length'])
-    #     body = self.rfile.read(content_length)
-    #     self.send_response(200)
-    #     self.end_headers()
-    #     response = BytesIO()
-    #     # response.write(b'This is POST request. ')
-    #     # response.write(b'Received: ')
-    #     # response.write(body)
-    #     # self.wfile.write(response.getvalue())
-    #     # print(self.raw_requestline)
-    #     # print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-    #     #         str(self.path), str(self.headers), body.decode('utf-8'))
-    #     params = dict([p.split('=') for p in body.decode('utf-8').split('&')])
-    #     control.add_nodes(params)
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length'])
+        body = self.rfile.read(content_length)
+        self.send_response(200)
+        self.end_headers()
+        # response = BytesIO()
+        # response.write(b'This is POST request. ')
+        # response.write(b'Received: ')
+        # response.write(body)
+        # self.wfile.write(response.getvalue())
+        # print(self.raw_requestline)
+        # print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+        #         str(self.path), str(self.headers), body.decode('utf-8'))
+        params = dict([p.split('=') for p in body.decode('utf-8').split('&')])
+        print(params)
 
 
 if __name__ == "__main__":

@@ -33,8 +33,9 @@ def get_request(url, headers, payload):
 
 
 class Withings:
-    def __init__(self, access_token):
+    def __init__(self, access_token, ingress):
         self.access_token = access_token
+        self.ingress = ingress
 
         self.headers = {'Content-Type': 'application/x-www-form-urlencoded',
                         'Authorization': 'Bearer ' + self.access_token}
@@ -87,3 +88,29 @@ class Withings:
             return resp
         else:
             LOGGER.error("Withings.get_sleep_summary is None")
+
+    def subscribe_bed_in(self):
+        url = "https://wbsapi.withings.net/notify"
+        # callbackurl = self.poly.init['netInfo']['httpsIngress']
+        callbackurl = self.ingress
+        payload = {"action": "subscribe", "appli": "50", "callbackurl": callbackurl}
+
+        resp = get_request(url, self.headers, payload)
+        if resp is not None:
+            return True
+        else:
+            LOGGER.error("Withings.subscribe_bed_in Error: " + str(resp))
+            return False
+
+    def subscribe_bed_out(self):
+        url = "https://wbsapi.withings.net/notify"
+        # callbackurl = self.poly.init['netInfo']['httpsIngress']
+        callbackurl = self.ingress
+        payload = {"action": "subscribe", "appli": "51", "callbackurl": callbackurl}
+
+        resp = get_request(url, self.headers, payload)
+        if resp is not None:
+            return True
+        else:
+            LOGGER.error("Withings.subscribe_bed_out Error: " + str(resp))
+            return False
