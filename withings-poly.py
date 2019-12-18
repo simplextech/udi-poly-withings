@@ -7,11 +7,18 @@ except ImportError:
 import sys
 import time
 import requests
-from flask import Flask
-from flask import Response
-import threading
+import re
+# from flask import Flask
+# from flask import Response
+# import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
-
+from withings import Withings
+import copy
+# from nodes import WithingsParentNode
+# from nodes import WithingsDeviceNode
+from nodes import *
+# from nodes.withings_scale_node import WithingsScaleHRNode
+import utils
 
 LOGGER = polyinterface.LOGGER
 
@@ -19,11 +26,52 @@ LOGGER = polyinterface.LOGGER
 class Controller(polyinterface.Controller):
     def __init__(self, polyglot):
         super(Controller, self).__init__(polyglot)
-        self.name = 'Template Controller'
-        self.poly.onConfig(self.process_config)
+        self.name = 'Withings Controller'
+        # self.poly.onConfig(self.process_config)
         self.server_data = {}
+        self.access_token = None
+        self.user_info = {}
+        self.ingress = None
+        self.disco = 0
+        self.measure_type_map = {
+            1: 'Weight',
+            4: 'Height',
+            5: 'Fat Free Mass',
+            6: 'Fat Ratio',
+            8: 'Fat Mass Weight',
+            9: 'Diastolic Blood Pressure',
+            10: 'Systolic Blood Pressure',
+            11: 'Heart Pulse',
+            12: 'Temperature',
+            54: 'SP02',
+            71: 'Body Temperature',
+            73: 'Skin Temperature',
+            76: 'Muscle Mass',
+            77: 'Hydration',
+            88: 'Bone Mass',
+            91: 'Pulse Wave Velocity'
+        }
+        self.activities_map = {
+            'steps': 'Steps',
+            'distance': 'Distance in Steps',
+            'elevation': 'Floors Climbed',
+            'soft': 'Light Activity',
+            'moderate': 'Moderate Activity',
+            'intense': 'Intense Activity',
+            'active': 'Sum of Intense and Moderate',
+            'calories': 'Active calories burned',
+            'totalcalories': 'Total calories burned',
+            'hr_average': 'Average heart rate',
+            'hr_min': 'Minimal heart rate',
+            'hr_max': 'Maximal heart rate',
+            'hr_zone_0': 'Duration in light zone',
+            'hr_zone_1': 'Duration in moderate zone',
+            'hr_zone_2': 'Duration in intense zone',
+            'hr_zone_3': 'Duration in maximal zone'
+        }
 
     def start(self):
+        self.setDriver('ST', 1)
         # This grabs the server.json data and checks profile_version is up to date
         # serverdata = self.poly.get_server_data()
         # LOGGER.info('Started Template NodeServer {}'.format(serverdata['version']))
@@ -38,6 +86,7 @@ class Controller(polyinterface.Controller):
         print("httpsIngress: " + str(self.poly.init['netInfo']['httpsIngress']))
         print("publicIp: " + self.poly.init['netInfo']['publicIp'])
         print("-----------------------------------")
+        self.ingress = self.poly.init['netInfo']['httpsIngress']
         # httpd = HTTPServer(('0.0.0.0', 3000), CallBackServer)
         # httpd.serve_forever()
 
@@ -46,6 +95,12 @@ class Controller(polyinterface.Controller):
         # cb_server.start()
         if self.get_credentials():
             self.auth_prompt()
+            if self.refresh_token():
+                self.discover()
+            else:
+                self.auth_prompt()
+        else:
+            LOGGER.error("Credentials for OAuth are not available")
 
     # def flask_server(self):
     #     print("-----------------------------------")
@@ -117,7 +172,7 @@ class Controller(polyinterface.Controller):
     def auth_prompt(self):
         LOGGER.debug("----------- Running auth_prompt ----------------")
         _auth_url = "https://account.withings.com/oauth2_user/authorize2"
-        _scope = "user.info,user.metrics,user.activity"
+        _scope = "user.info,user.metrics,user.activity,user.sleepevents"
 
         _user_auth_url = _auth_url + \
                          "?client_id=" + self.server_data['clientId'] + \
@@ -132,11 +187,17 @@ class Controller(polyinterface.Controller):
     def oauth(self, oauth):
         LOGGER.info('OAUTH Received: {}'.format(oauth))
         if 'code' in oauth:
-            self.get_token(oauth['code'])
+            if self.get_token(oauth['code']):
+                LOGGER.info("Withings OAuth Successful")
+                self.discover()
+            else:
+                LOGGER.warn("Withings OAuth Failed")
         else:
             print(oauth)
 
     def get_token(self, code):
+        _state = None
+
         _token_url = "https://account.withings.com/oauth2/token"
 
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -147,87 +208,224 @@ class Controller(polyinterface.Controller):
                    "client_secret": self.server_data['clientSecret'],
                    "redirect_uri": self.server_data['url']}
 
+        # print("Get Token Begin----------------------------------")
+        custom_data = copy.deepcopy(self.polyConfig['customData'])
+        # print(custom_data)
+        # print("Get Token Begin----------------------------------")
+
         try:
             r = requests.post(_token_url, headers=headers, data=payload)
             if r.status_code == requests.codes.ok:
                 try:
                     resp = r.json()
-                    print(resp)
                     access_token = resp['access_token']
                     refresh_token = resp['refresh_token']
                     expires_in = resp['expires_in']
                     user_id = resp['userid']
 
-                    cust_data = {'access_token': access_token,
-                                 'refresh_token': refresh_token,
-                                 'expires_in': expires_in,
-                                 'user_id': user_id
-                                 }
+                    # print("------------ NEW USER: " + str(user_id) + " ----------------")
+                    custom_data[user_id] = {'access_token': access_token,
+                                            'refresh_token': refresh_token,
+                                            'expires_in': expires_in,
+                                            'user_id': user_id}
 
-                    self.saveCustomData(cust_data)
-                    self.remove_notices_all()
-                    print(cust_data)
+                    # print("Get Token End----------------------------------")
+                    # print(custom_data)
+                    # print("Get Token End----------------------------------")
+
+                    self.saveCustomData(custom_data)
+                    _state = True
                     return True
                 except KeyError as ex:
                     LOGGER.error("get_token Error: " + str(ex))
             else:
+                _state = False
                 return False
         except requests.exceptions.RequestException as e:
             LOGGER.error("Error: " + str(e))
 
+        if _state:
+            LOGGER.debug("---------------Get Token Complete -----------------------")
+            self.discover()
+        else:
+            return False
+
     def refresh_token(self):
-        """
-        Optional.
-        Code for processing any token refresh from an OAuth workflow
-        :return:
-        """
-        pass
+        _state = None
+        _token_url = "https://account.withings.com/oauth2/token"
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+
+        custom_data = copy.deepcopy(self.polyConfig['customData'])
+        # print("---------------------------- refresh_token ----------------------------")
+
+        for user_id in custom_data.keys():
+            # print("----refresh token-------- USER: " + str(user_id) + " ----------------")
+            payload = {"grant_type": "refresh_token",
+                       "client_id": self.server_data['clientId'],
+                       "client_secret": self.server_data['clientSecret'],
+                       "refresh_token": custom_data[user_id]['refresh_token']
+                       }
+            # print("---refresh token ----- " + custom_data[user_id]['refresh_token'])
+            try:
+                r = requests.post(_token_url, headers=headers, data=payload)
+                if r.status_code == requests.codes.ok:
+                    resp = r.json()
+                    access_token = resp['access_token']
+                    refresh_token = resp['refresh_token']
+                    expires_in = resp['expires_in']
+                    _user_id = resp['userid']
+
+                    custom_data[user_id] = {'access_token': access_token,
+                                            'refresh_token': refresh_token,
+                                            'expires_in': expires_in,
+                                            'user_id': _user_id}
+
+                    _state = True
+                else:
+                    _state = False
+            except requests.exceptions.RequestException as e:
+                LOGGER.error("Error: " + str(e))
+
+        if _state:
+            # print("---------------refresh  New Custom Data -----------------------")
+            # print(custom_data)
+            self.saveCustomData(custom_data)
+            time.sleep(3)
+            return True
+        else:
+            return False
 
     def shortPoll(self):
-        """
-        Optional.
-        This runs every 10 seconds. You would probably update your nodes either here
-        or longPoll. No need to Super this method the parent version does nothing.
-        The timer can be overriden in the server.json.
-        """
-        LOGGER.debug('shortPoll')
+        if self.disco != 0:
+            LOGGER.debug('shortPoll')
+            self.withings_update()
 
     def longPoll(self):
-        """
-        Optional.
-        This runs every 30 seconds. You would probably update your nodes either here
-        or shortPoll. No need to Super this method the parent version does nothing.
-        The timer can be overriden in the server.json.
-        """
         LOGGER.debug('longPoll')
+        self.refresh_token()
 
     def query(self, command=None):
-        """
-        Optional.
-        By default a query to the control node reports the FULL driver set for ALL
-        nodes back to ISY. If you override this method you will need to Super or
-        issue a reportDrivers() to each node manually.
-        """
-        self.check_params()
-        for node in self.nodes:
-            self.nodes[node].reportDrivers()
+        self.withings_update()
+        # self.check_params()
+        # for node in self.nodes:
+        #     self.nodes[node].reportDrivers()
 
     def discover(self, *args, **kwargs):
-        """
-        Example
-        Do discovery here. Does not have to be called discovery. Called from example
-        controller start method and from DISCOVER command recieved from ISY as an exmaple.
-        """
-        self.addNode(TemplateNode(self, self.address, 'templateaddr', 'Template Node Name'))
+        custom_data = self.polyConfig['customData']
+        for user_id in custom_data.keys():
+            access_token = custom_data[user_id]['access_token']
+            withings = Withings(access_token, self.ingress)
+            devices = withings.get_devices()
+            measures = withings.get_measure()
+            activities = withings.get_activities()
+            sleep = withings.get_sleep_summary()
+
+            # Create User ID Parent Nodes
+            parent_address = str(user_id).replace('0', '')[-3:]
+            self.addNode(WithingsParentNode(self, parent_address, parent_address, "Withings User " + str(user_id)))
+
+            if devices is not None:
+                for dev in devices['body']['devices']:
+                    node_name = dev['type']
+                    dev_type = dev['type']
+                    model_id = dev['model_id']
+                    node_address = parent_address + dev['deviceid'][-3:].lower()
+
+                    if dev_type == "Scale":
+                        if model_id == 6:
+                            self.addNode(WithingsScaleHRNode(self, parent_address, node_address,
+                                                             node_name, devices, measures))
+                            time.sleep(2)
+                        else:
+                            self.addNode(WithingsScaleNode(self, parent_address, node_address,
+                                                           node_name, devices, measures))
+                            time.sleep(2)
+
+                    if dev_type == "Activity Tracker":
+                        if model_id == 59:
+                            self.addNode(
+                                WithingsActivityTrackerNode(
+                                    self, parent_address, node_address, node_name, devices, activities)
+                            )
+                            time.sleep(2)
+
+                            self.addNode(
+                                WithingsActivityTrackerHRNode(
+                                    self, parent_address, node_address + "hr", node_name + " HR", devices, activities)
+                            )
+                            time.sleep(2)
+
+                            self.addNode(
+                                WithingsActivityTrackerSleepHRNode(
+                                    self, parent_address, node_address + "sl", node_name + " Sleep", devices, sleep)
+                            )
+                            time.sleep(2)
+                        else:
+                            self.addNode(
+                                WithingsActivityTrackerNode(
+                                    self, parent_address, node_address, node_name, devices, activities)
+                            )
+                            time.sleep(2)
+
+                            self.addNode(
+                                WithingsActivityTrackerSleepNode(
+                                    self, parent_address, node_address + "sl", node_name + " Sleep", devices, sleep)
+                            )
+                            time.sleep(2)
+
+                    if dev_type == "Blood Pressure Monitor":
+                        self.addNode(
+                            WithingsBPMNode(self, parent_address, node_address, node_name, devices, measures)
+                        )
+                        time.sleep(2)
+
+                    if dev_type == "Sleep Monitor":
+                        self.addNode(
+                            WithingsSleepNode(self, parent_address, node_address, node_name, devices, sleep)
+                        )
+                        if withings.subscribe_bed_in():
+                            LOGGER.info("Subscribe Bed-In Success")
+                        else:
+                            LOGGER.info("Subscribe Bed-In Error")
+
+                        if withings.subscribe_bed_out():
+                            LOGGER.info("Subscribe Bed-Out Success")
+                        else:
+                            LOGGER.info("Subscribe Bed-Out Error")
+
+                        time.sleep(2)
+
+            time.sleep(3)
+        self.disco = 1
+
+    def withings_update(self):
+        custom_data = self.polyConfig['customData']
+        for user_id in custom_data.keys():
+            access_token = custom_data[user_id]['access_token']
+            print(user_id, access_token)
+            withings = Withings(access_token, self.ingress)
+            devices = withings.get_devices()
+            measures = withings.get_measure()
+            activities = withings.get_activities()
+            sleep = withings.get_sleep_summary()
+
+            parent_address = str(user_id).replace('0', '')[-3:]
+            for node in self.nodes:
+                if self.nodes[node].address != "controller":
+                    pattern = '^' + parent_address
+                    node_address = self.nodes[node].address
+                    re_result = re.match(pattern, node_address)
+                    if re_result:
+                        print("Node: " + self.nodes[node].address)
+                        self.nodes[node].query(command=[devices, measures, activities, sleep])
+                    else:
+                        pass
+                    time.sleep(2)
+            print("Updated: " + str(user_id))
+            time.sleep(3)
 
     def delete(self):
-        """
-        Example
-        This is sent by Polyglot upon deletion of the NodeServer. If the process is
-        co-resident and controlled by Polyglot, it will be terminiated within 5 seconds
-        of receiving this message.
-        """
-        LOGGER.info('Oh God I\'m being deleted. Nooooooooooooooooooooooooooooooooooooooooo.')
+        LOGGER.info('Removing Withings Nodeserver')
 
     def stop(self):
         LOGGER.debug('NodeServer stopped.')
@@ -287,121 +485,16 @@ class Controller(polyinterface.Controller):
         st = self.poly.installprofile()
         return st
 
-    """
-    Optional.
-    Since the controller is the parent node in ISY, it will actual show up as a node.
-    So it needs to know the drivers and what id it will use. The drivers are
-    the defaults in the parent Class, so you don't need them unless you want to add to
-    them. The ST and GV1 variables are for reporting status through Polyglot to ISY,
-    DO NOT remove them. UOM 2 is boolean.
-    The id must match the nodeDef id="controller"
-    In the nodedefs.xml
-    """
     id = 'controller'
     commands = {
         'QUERY': query,
         'DISCOVER': discover,
         'UPDATE_PROFILE': update_profile,
-        'REMOVE_NOTICES_ALL': remove_notices_all,
-        'REMOVE_NOTICE_TEST': remove_notice_test
+        # 'REMOVE_NOTICES_ALL': remove_notices_all,
+        # 'REMOVE_NOTICE_TEST': remove_notice_test
     }
     drivers = [{'driver': 'ST', 'value': 1, 'uom': 2}]
 
-
-class TemplateNode(polyinterface.Node):
-    """
-    This is the class that all the Nodes will be represented by. You will add this to
-    Polyglot/ISY with the controller.addNode method.
-
-    Class Variables:
-    self.primary: String address of the Controller node.
-    self.parent: Easy access to the Controller Class from the node itself.
-    self.address: String address of this Node 14 character limit. (ISY limitation)
-    self.added: Boolean Confirmed added to ISY
-
-    Class Methods:
-    start(): This method is called once polyglot confirms the node is added to ISY.
-    setDriver('ST', 1, report = True, force = False):
-        This sets the driver 'ST' to 1. If report is False we do not report it to
-        Polyglot/ISY. If force is True, we send a report even if the value hasn't changed.
-    reportDrivers(): Forces a full update of all drivers to Polyglot/ISY.
-    query(): Called when ISY sends a query request to Polyglot for this specific node
-    """
-
-    def __init__(self, controller, primary, address, name):
-        """
-        Optional.
-        Super runs all the parent class necessities. You do NOT have
-        to override the __init__ method, but if you do, you MUST call super.
-
-        :param controller: Reference to the Controller class
-        :param primary: Controller address
-        :param address: This nodes address
-        :param name: This nodes name
-        """
-        super(TemplateNode, self).__init__(controller, primary, address, name)
-
-    def start(self):
-        """
-        Optional.
-        This method is run once the Node is successfully added to the ISY
-        and we get a return result from Polyglot. Only happens once.
-        """
-        self.setDriver('ST', 1)
-        pass
-
-    def shortPoll(self):
-        LOGGER.debug('shortPoll')
-
-    def longPoll(self):
-        LOGGER.debug('longPoll')
-
-    def setOn(self, command):
-        """
-        Example command received from ISY.
-        Set DON on TemplateNode.
-        Sets the ST (status) driver to 1 or 'True'
-        """
-        self.setDriver('ST', 1)
-
-    def setOff(self, command):
-        """
-        Example command received from ISY.
-        Set DOF on TemplateNode
-        Sets the ST (status) driver to 0 or 'False'
-        """
-        self.setDriver('ST', 0)
-
-    def query(self, command=None):
-        """
-        Called by ISY to report all drivers for this node. This is done in
-        the parent class, so you don't need to override this method unless
-        there is a need.
-        """
-        self.reportDrivers()
-
-    "Hints See: https://github.com/UniversalDevicesInc/hints"
-    hint = [1, 2, 3, 4]
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 2}]
-    """
-    Optional.
-    This is an array of dictionary items containing the variable names(drivers)
-    values and uoms(units of measure) from ISY. This is how ISY knows what kind
-    of variable to display. Check the UOM's in the WSDK for a complete list.
-    UOM 2 is boolean so the ISY will display 'True/False'
-    """
-    id = 'templatenodeid'
-    """
-    id of the node from the nodedefs.xml that is in the profile.zip. This tells
-    the ISY what fields and commands this node has.
-    """
-    commands = {
-        'DON': setOn, 'DOF': setOff
-    }
-    """
-    This is a dictionary of commands. If ISY sends a command to the NodeServer,
-    this tells it which method to call. DON calls setOn, etc.
-    """
 
 #
 # class CallBackServer:
@@ -439,25 +532,34 @@ class CallBackServer(BaseHTTPRequestHandler):
         LOGGER.info("=============== CallBack Server Test Line ======================")
         print(self.raw_requestline)
 
-    # def do_POST(self):
-    #     content_length = int(self.headers['Content-Length'])
-    #     body = self.rfile.read(content_length)
-    #     self.send_response(200)
-    #     self.end_headers()
-    #     response = BytesIO()
-    #     # response.write(b'This is POST request. ')
-    #     # response.write(b'Received: ')
-    #     # response.write(body)
-    #     # self.wfile.write(response.getvalue())
-    #     # print(self.raw_requestline)
-    #     # print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-    #     #         str(self.path), str(self.headers), body.decode('utf-8'))
-    #     params = dict([p.split('=') for p in body.decode('utf-8').split('&')])
-    #     control.add_nodes(params)
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
+        post_data = self.rfile.read(content_length)  # <--- Gets the data itself
+        LOGGER.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                     str(self.path), str(self.headers), post_data.decode('utf-8'))
+
+        self._set_response()
+        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+        #
+        # content_length = int(self.headers['Content-Length'])
+        # body = self.rfile.read(content_length)
+        # self.send_response(200)
+        # self.end_headers()
+        # # response = BytesIO()
+        # # response.write(b'This is POST request. ')
+        # # response.write(b'Received: ')
+        # # response.write(body)
+        # # self.wfile.write(response.getvalue())
+        # # print(self.raw_requestline)
+        # # print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+        # #         str(self.path), str(self.headers), body.decode('utf-8'))
+        # params = dict([p.split('=') for p in body.decode('utf-8').split('&')])
+        # print(params)
+
 
 if __name__ == "__main__":
     try:
-        polyglot = polyinterface.Interface('Template')
+        polyglot = polyinterface.Interface('Withings')
         polyglot.start()
         control = Controller(polyglot)
         control.runForever()
@@ -465,6 +567,7 @@ if __name__ == "__main__":
         httpd.serve_forever()
     except (KeyboardInterrupt, SystemExit):
         LOGGER.warning("Received interrupt or exit...")
+        httpd.server_close()
     except Exception as err:
         LOGGER.error('Excption: {0}'.format(err), exc_info=True)
         polyglot.stop()

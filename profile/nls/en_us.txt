@@ -1,12 +1,147 @@
 # controller
-ND-controller-NAME = Template NodeServer Controller
-CMD-ctl-QUERY"-NAME = Query
-CMD-ctl-DISCOVER-NAME = Re-Discover
+ND-controller-NAME = Withings NodeServer Controller
+CMD-ctl-QUERY-NAME = Query
+CMD-ctl-DISCOVER-NAME = Discover
 CMD-ctl-UPDATE_PROFILE-NAME = Update Profile
 CMD-ctl-REMOVE_NOTICES_ALL-NAME = Remove All Notices
 CMD-ctl-REMOVE_NOTICE_TEST-NAME = Remove Notice Test
 ST-ctl-ST-NAME = NodeServer Online
 
-# mynodetype
-ND-tmplnode-NAME = Template Node
-ST-tmplnode-ST-NAME = Node Status
+# BATTERY LEVEL
+I_BATTERY-0 = N/A
+I_BATTERY-1 = Low
+I_BATTERY-2 = Medium
+I_BATTERY-3 = High
+
+# Breathing Disturbances Intensity
+I_BREATHING-0 = N/A
+I_BREATHING-1 = Low
+I_BREATHING-2 = Medium
+I_BREATHING-3 = High
+
+
+ND-WITHINGS_NODE-NAME = Withings Device
+ST-WITHINGS-ST-NAME = Battery
+
+
+ND-PARENT_NODE-NAME = Withings User
+ST-PARENT-ST-NAME = Online
+
+
+ND-MEASURE_NODE-NAME = Withings Measurement
+ST-MEASURE-ST-NAME = Online
+
+
+#ND-ACTIVITY_NODE-NAME = Withings Activity
+#ST-ACTIVITY-ST-NAME = Online
+
+ST-ACTIVE-ST-NAME = Sum Activity Time
+ST-BODYTEMP-ST-NAME = Body Temperature
+ST-BONEMASS-ST-NAME = Bone Mass
+ST-CALORIES-ST-NAME = Calories Burned
+ST-DIASTOLIC-ST-NAME = Diastolic mmHg
+ST-DISTANCE-ST-NAME = Distance
+ST-ELEVATION-ST-NAME = Floors Climbed
+ST-FATFREE-ST-NAME = Fat Free
+ST-FATMASS-ST-NAME = Fat Mass
+ST-FATRATIO-ST-NAME = Fat Percent
+ST-HEIGHT-ST-NAME = Height
+ST-HRAVERAGE-ST-NAME = Heart Rate
+ST-HRMAX-ST-NAME = Heart Rate
+ST-HRMIN-ST-NAME = Heart Rate
+ST-HRZONE0-ST-NAME = HR Zone 0
+ST-HRZONE1-ST-NAME = HR Zone 1
+ST-HRZONE2-ST-NAME = HR Zone 2
+ST-HRZONE3-ST-NAME = HR Zone 3
+ST-HYDRATION-ST-NAME = Water Weight
+ST-INTENSE-ST-NAME = Activity Time
+ST-MODERATE-ST-NAME = Activity Time
+ST-MUSCLEMASS-ST-NAME = Muscle Mass
+ST-PULSE-ST-NAME = Heart Rate
+ST-PWV-ST-NAME = Pulse Wave Velocity
+ST-SKINTEMP-ST-NAME = Skin Temperature
+ST-SOFT-ST-NAME = Activity Time
+ST-SP02-ST-NAME = SP02
+ST-STEPS-ST-NAME = Steps
+ST-SYSSTOLIC-ST-NAME = Systolic mmHg
+ST-TEMP-ST-NAME = Temperature
+ST-TOTALCALORIES-ST-NAME = Total Calories Burned
+ST-WEIGHT-ST-NAME = Weight
+
+ND-WITHINGS_SCALE-NAME = Scale
+ND-WITHINGS_SCALE_HR-NAME = Scale - Body Cardio
+ST-SCALE-ST-NAME = Weight
+ST-SCALE-BATLVL-NAME = Battery
+ST-SCALE-GV0-NAME = Muscle Mass
+ST-SCALE-GV1-NAME = Bone Mass
+ST-SCALE-GV2-NAME = Fat Mass
+ST-SCALE-GV3-NAME = Fat Free Mass
+ST-SCALE-GV4-NAME = Fat Ratio
+ST-SCALE-GV5-NAME = Heart Rate
+
+ND-WITHINGS_ACTIVITY-NAME = Activity Tracker
+ST-ACTIVITY-ST-NAME = Steps
+ST-ACTIVITY-BATLVL-NAME = Battery
+ST-ACTIVITY-GV0-NAME = Distance
+ST-ACTIVITY-GV1-NAME = Floors
+ST-ACTIVITY-GV2-NAME = Light Activity
+ST-ACTIVITY-GV3-NAME = Moderate Activity
+ST-ACTIVITY-GV4-NAME = Intense Activity
+ST-ACTIVITY-GV5-NAME = Activity Sum
+ST-ACTIVITY-GV6-NAME = Activity Calories Burned
+ST-ACTIVITY-GV7-NAME = Total Calories
+
+ND-WITHINGS_ACTIVITY_HR-NAME = Activity Heart Rate
+ST-ACTHR-ST-NAME = Average HR
+ST-ACTHR-GV0-NAME = Min HR
+ST-ACTHR-GV1-NAME = Max HR
+ST-ACTHR-GV2-NAME = HR Zone 0
+ST-ACTHR-GV3-NAME = HR Zone 1
+ST-ACTHR-GV4-NAME = HR Zone 2
+ST-ACTHR-GV5-NAME = HR Zone 3
+
+ND-WITHINGS_ACTIVITY_SLEEP-NAME = Activity Sleep
+ST-ACTSLEEP-ST-NAME = Sleep Score
+ST-ACTSLEEP-GV0-NAME = Light Sleep Duration
+ST-ACTSLEEP-GV1-NAME = Deep Sleep Duration
+ST-ACTSLEEP-GV2-NAME = Wakeup Count
+ST-ACTSLEEP-GV3-NAME = Wakeup Duration
+ST-ACTSLEEP-GV4-NAME = Duration to Sleep
+ST-ACTSLEEP-GV5-NAME = Duration to Wakeup
+
+ND-WITHINGS_ACTIVITY_SLEEP_HR-NAME = Activity Sleep
+ST-ACTSLEEPHR-ST-NAME = Sleep Score
+ST-ACTSLEEPHR-GV0-NAME = Light Sleep Duration
+ST-ACTSLEEPHR-GV1-NAME = Deep Sleep Duration
+ST-ACTSLEEPHR-GV2-NAME = Wakeup Count
+ST-ACTSLEEPHR-GV3-NAME = Wakeup Duration
+ST-ACTSLEEPHR-GV4-NAME = Duration to Sleep
+ST-ACTSLEEPHR-GV5-NAME = Duration to Wakeup
+ST-ACTSLEEPHR-GV6-NAME = Average HR
+ST-ACTSLEEPHR-GV7-NAME = Min HR
+ST-ACTSLEEPHR-GV8-NAME = Max HR
+
+ND-WITHINGS_BPM-NAME = Blood Pressure Monitor
+ST-BPM-ST-NAME = Heart Rate
+ST-BPM-BATLVL-NAME = Battery
+ST-BPM-GV0-NAME = Systolic
+ST-BPM-GV1-NAME = Diastolic
+
+ND-WITHINGS_SLEEP-NAME = Sleep Monitor
+ST-SLEEP-ST-NAME = Sleep Score
+ST-SLEEP-GV0-NAME = Light Sleep Duration
+ST-SLEEP-GV1-NAME = Deep Sleep Duration
+ST-SLEEP-GV2-NAME = REM Sleep Duration
+ST-SLEEP-GV3-NAME = Wakeup Count
+ST-SLEEP-GV4-NAME = Wakeup Duration
+ST-SLEEP-GV5-NAME = Duration to Sleep
+ST-SLEEP-GV6-NAME = Duration to Wakeup
+ST-SLEEP-GV7-NAME = Average HR
+ST-SLEEP-GV8-NAME = Min HR
+ST-SLEEP-GV9-NAME = Max HR
+ST-SLEEP-GV10-NAME = RR Average
+ST-SLEEP-GV11-NAME = RR Min
+ST-SLEEP-GV12-NAME = RR Max
+ST-SLEEP-GV13-NAME = Breathing Disturbance Intensity
+ST-SLEEP-GV14-NAME = Snoring Duration
+ST-SLEEP-GV15-NAME = Snoring Episodes
