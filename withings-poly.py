@@ -553,7 +553,7 @@ class CallBackServer(BaseHTTPRequestHandler):
         # params = parse_qsl(urlparse(self.path).params)
         # params = parse_qsl(urlparse(self.request).query)
 
-        params = dict([p.split('=') for p in self.path.decode('utf-8').split('&')])
+        params = dict([p.split('=') for p in self.path.split('&')])
         print(params)
 
         self._set_response()
