@@ -548,19 +548,19 @@ class CallBackServer(BaseHTTPRequestHandler):
 
 
         print("-----Requests-----")
-        print(self.path)
+        # print(self.path)
         # data = str(post_data)
-        print("Post Data: " + raw_post_data.decode('utf-8'))
-        post_data = urllib.parse.parse_qs(raw_post_data.decode('utf-8'))
-        print(post_data)
+        # print("Post Data: " + raw_post_data.decode('utf-8'))
+        # post_data = urllib.parse.parse_qs(raw_post_data.decode('utf-8'))
+        # print(post_data)
         params = dict([p.split('=') for p in raw_post_data.decode('utf-8').split('&')])
         print(params)
 
-        for i in post_data:
-            print(i)
-
-        for i in params:
-            print(i)
+        # for i in post_data:
+        #     print(i)
+        #
+        # for i in params:
+        #     print(i)
 
         self._set_response()
         # date=1576708199&deviceid=a2c97dec4d1b2e48ff1b3367728d45d727342eb9&appli=50&userid=18418009
