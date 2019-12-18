@@ -537,7 +537,7 @@ class CallBackServer(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.end_headers()
-        self.wfile.write(b'Hello, world!')
+        # self.wfile.write(b'Hello, world!')
         LOGGER.info("=============== CallBack Server Test Line ======================")
         print(self.raw_requestline)
 
@@ -548,6 +548,7 @@ class CallBackServer(BaseHTTPRequestHandler):
 
         print("-----Requests-----")
         print(self.path)
+        print("Post Data: " + str(post_data))
         # date=1576708199&deviceid=a2c97dec4d1b2e48ff1b3367728d45d727342eb9&appli=50&userid=18418009
         params = dict([p.split('=') for p in self.path.split('&')])
 
