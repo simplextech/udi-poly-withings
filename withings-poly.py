@@ -541,19 +541,24 @@ class CallBackServer(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
         post_data = self.rfile.read(content_length)  # <--- Gets the data itself
-        LOGGER.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-                     str(self.path), str(self.headers), post_data.decode('utf-8'))
+        # LOGGER.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+        #              str(self.path), str(self.headers), post_data.decode('utf-8'))
         # params = dict([p.split('=') for p in post_data.decode('utf-8').split('&')])
         # print(params)
         print("-----Requests-----")
-        print(self.raw_requestline)
-        print(self.request)
-        print(self.requestline)
-        print(post_data)
-        # params = parse_qsl(urlparse(self.raw_requestline).params)
+        # print(self.raw_requestline)
+        # print(self.request)
+        # print(self.requestline)
+        # print(post_data)
+        # params = parse_qsl(urlparse(self.path).params)
         # params = parse_qsl(urlparse(self.request).query)
 
+        params = dict([p.split('=') for p in self.path.split('&')])
         print(params)
+        if 'deviceid' in params:
+            print("Device ID: " + params['deviceid'])
+        if 'appli' in params:
+            print("Appli: " + params['appli'])
 
         self._set_response()
         # self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
