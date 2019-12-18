@@ -550,9 +550,10 @@ class CallBackServer(BaseHTTPRequestHandler):
         print(self.request)
         print(self.requestline)
         print(post_data)
-        # params = parse_qsl(urlparse(self.raw_requestline).params)
+        # params = parse_qsl(urlparse(self.path).params)
         # params = parse_qsl(urlparse(self.request).query)
 
+        params = dict([p.split('=') for p in self.path.decode('utf-8').split('&')])
         print(params)
 
         self._set_response()
