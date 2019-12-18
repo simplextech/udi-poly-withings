@@ -87,8 +87,8 @@ class Controller(polyinterface.Controller):
         print("publicIp: " + self.poly.init['netInfo']['publicIp'])
         print("-----------------------------------")
         self.ingress = self.poly.init['netInfo']['httpsIngress']
-        httpd = HTTPServer(('0.0.0.0', 3000), CallBackServer)
-        httpd.serve_forever()
+        # httpd = HTTPServer(('0.0.0.0', 3000), CallBackServer)
+        # httpd.serve_forever()
 
         # cb_server = threading.Thread(name='Callback Server', target=CallBackServer.flask_server())
         # cb_server.setDaemon(True)
