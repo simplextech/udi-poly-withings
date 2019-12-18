@@ -12,6 +12,7 @@ import re
 # from flask import Response
 # import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import urlparse, parse_qsl
 from withings import Withings
 import copy
 # from nodes import WithingsParentNode
@@ -542,7 +543,9 @@ class CallBackServer(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length)  # <--- Gets the data itself
         # LOGGER.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
         #              str(self.path), str(self.headers), post_data.decode('utf-8'))
-        params = dict([p.split('=') for p in post_data.decode('utf-8').split('&')])
+        # params = dict([p.split('=') for p in post_data.decode('utf-8').split('&')])
+        # print(params)
+        params = parse_qsl(urlparse(post_data).query)
         print(params)
 
         self._set_response()
