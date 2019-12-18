@@ -533,20 +533,28 @@ class CallBackServer(BaseHTTPRequestHandler):
         print(self.raw_requestline)
 
     def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
-        body = self.rfile.read(content_length)
-        self.send_response(200)
-        self.end_headers()
-        # response = BytesIO()
-        # response.write(b'This is POST request. ')
-        # response.write(b'Received: ')
-        # response.write(body)
-        # self.wfile.write(response.getvalue())
-        # print(self.raw_requestline)
-        # print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-        #         str(self.path), str(self.headers), body.decode('utf-8'))
-        params = dict([p.split('=') for p in body.decode('utf-8').split('&')])
-        print(params)
+        content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
+        post_data = self.rfile.read(content_length)  # <--- Gets the data itself
+        LOGGER.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                     str(self.path), str(self.headers), post_data.decode('utf-8'))
+
+        self._set_response()
+        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+        #
+        # content_length = int(self.headers['Content-Length'])
+        # body = self.rfile.read(content_length)
+        # self.send_response(200)
+        # self.end_headers()
+        # # response = BytesIO()
+        # # response.write(b'This is POST request. ')
+        # # response.write(b'Received: ')
+        # # response.write(body)
+        # # self.wfile.write(response.getvalue())
+        # # print(self.raw_requestline)
+        # # print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+        # #         str(self.path), str(self.headers), body.decode('utf-8'))
+        # params = dict([p.split('=') for p in body.decode('utf-8').split('&')])
+        # print(params)
 
 
 if __name__ == "__main__":
@@ -559,6 +567,7 @@ if __name__ == "__main__":
         httpd.serve_forever()
     except (KeyboardInterrupt, SystemExit):
         LOGGER.warning("Received interrupt or exit...")
+        httpd.server_close()
     except Exception as err:
         LOGGER.error('Excption: {0}'.format(err), exc_info=True)
         polyglot.stop()
