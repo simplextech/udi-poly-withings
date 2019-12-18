@@ -541,16 +541,16 @@ class CallBackServer(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
         post_data = self.rfile.read(content_length)  # <--- Gets the data itself
-        # LOGGER.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-        #              str(self.path), str(self.headers), post_data.decode('utf-8'))
+        LOGGER.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                     str(self.path), str(self.headers), post_data.decode('utf-8'))
         # params = dict([p.split('=') for p in post_data.decode('utf-8').split('&')])
         # print(params)
         print("-----Requests-----")
-        print("Raw: " + self.raw_requestline)
-        print("Request: " + self.request)
-        print("Request Line: " + self.requestline)
+        print(self.raw_requestline)
+        print(self.request)
+        print(self.requestline)
         print(post_data)
-        params = parse_qsl(urlparse(self.raw_requestline).params)
+        # params = parse_qsl(urlparse(self.raw_requestline).params)
         # params = parse_qsl(urlparse(self.request).query)
 
         print(params)
