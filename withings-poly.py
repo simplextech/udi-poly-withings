@@ -551,9 +551,9 @@ class CallBackServer(BaseHTTPRequestHandler):
         print(self.requestline)
         print(post_data)
         # params = parse_qsl(urlparse(post_data).query)
-        params = parse_qsl(urlparse(self.request).query)
+        # params = parse_qsl(urlparse(self.request).query)
 
-        print(params)
+        # print(params)
 
         self._set_response()
         # self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
