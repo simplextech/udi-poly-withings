@@ -13,6 +13,7 @@ import re
 # import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qsl
+import urllib
 from withings import Withings
 import copy
 # from nodes import WithingsParentNode
@@ -548,27 +549,35 @@ class CallBackServer(BaseHTTPRequestHandler):
 
         print("-----Requests-----")
         print(self.path)
-        print("Post Data: " + str(post_data))
+        data = str(post_data)
+        print("Post Data: " + data)
+
+        length = int(self.headers['Content-Length'])
+        post_data = urllib.parse.parse_qs(self.rfile.read(length).decode('utf-8'))
+        print(post_data)
         # date=1576708199&deviceid=a2c97dec4d1b2e48ff1b3367728d45d727342eb9&appli=50&userid=18418009
-        params = dict([p.split('=') for p in self.path.split('&')])
 
-        device_id = ""
-        appli = ""
-        if 'deviceid' in params:
-            print("Device ID: " + params['deviceid'])
-            device_id = params['deviceid']
-        if 'appli' in params:
-            print("Appli: " + params['appli'])
-            appli = params['deviceid']
+        # params = dict([p.split('=') for p in self.path.split('&')])
 
-        custom_data = self.polyConfig['customData']
-        for user_id in custom_data.keys():
-            parent_address = str(user_id).replace('0', '')[-3:]
-            node_address = parent_address + device_id[-3:].lower()
-            if appli == "50":
-                control.nodes[node_address].setDriver('GV16', 1)
-            if appli == "51":
-                control.nodes[node_address].setDriver('GV16', 0)
+        # params = dict([p.split('=') for p in post_data.split('&')])
+
+        # device_id = ""
+        # appli = ""
+        # if 'deviceid' in params:
+        #     print("Device ID: " + params['deviceid'])
+        #     device_id = params['deviceid']
+        # if 'appli' in params:
+        #     print("Appli: " + params['appli'])
+        #     appli = params['deviceid']
+        #
+        # custom_data = self.polyConfig['customData']
+        # for user_id in custom_data.keys():
+        #     parent_address = str(user_id).replace('0', '')[-3:]
+        #     node_address = parent_address + device_id[-3:].lower()
+        #     if appli == "50":
+        #         control.nodes[node_address].setDriver('GV16', 1)
+        #     if appli == "51":
+        #         control.nodes[node_address].setDriver('GV16', 0)
 
 
 if __name__ == "__main__":
