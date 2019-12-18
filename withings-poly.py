@@ -553,33 +553,38 @@ class CallBackServer(BaseHTTPRequestHandler):
         print("Post Data: " + raw_post_data.decode('utf-8'))
         post_data = urllib.parse.parse_qs(raw_post_data.decode('utf-8'))
         print(post_data)
-        # post_data = urllib.parse.parse_qs(self.rfile.read(length).decode('utf-8'))
+        params = dict([p.split('=') for p in post_data.split('&')])
+        print(params)
 
+        for i in post_data:
+            print(i)
 
+        for i in params:
+            print(i)
+    
         self._set_response()
         # date=1576708199&deviceid=a2c97dec4d1b2e48ff1b3367728d45d727342eb9&appli=50&userid=18418009
 
-        # params = dict([p.split('=') for p in self.path.split('&')])
 
-        # params = dict([p.split('=') for p in post_data.split('&')])
 
-        device_id = ""
-        appli = ""
-        if 'deviceid' in post_data:
-            print("Device ID: " + post_data['deviceid'][0])
-            device_id = post_data['deviceid']
-        if 'appli' in post_data:
-            print("Appli: " + post_data['appli'][0])
-            appli = post_data['deviceid']
 
-        custom_data = self.polyConfig['customData']
-        for user_id in custom_data.keys():
-            parent_address = str(user_id).replace('0', '')[-3:]
-            node_address = parent_address + device_id[-3:].lower()
-            if appli == "50":
-                control.nodes[node_address].setDriver('GV16', 1)
-            if appli == "51":
-                control.nodes[node_address].setDriver('GV16', 0)
+        # device_id = ""
+        # appli = ""
+        # if 'deviceid' in params:
+        #     print("Device ID: " + params['deviceid'])
+        #     device_id = params['deviceid']
+        # if 'appli' in params:
+        #     print("Appli: " + params['appli'])
+        #     appli = params['deviceid']
+        #
+        # custom_data = self.polyConfig['customData']
+        # for user_id in custom_data.keys():
+        #     parent_address = str(user_id).replace('0', '')[-3:]
+        #     node_address = parent_address + device_id[-3:].lower()
+        #     if appli == "50":
+        #         control.nodes[node_address].setDriver('GV16', 1)
+        #     if appli == "51":
+        #         control.nodes[node_address].setDriver('GV16', 0)
 
 
 if __name__ == "__main__":
