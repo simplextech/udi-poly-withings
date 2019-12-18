@@ -487,6 +487,16 @@ class Controller(polyinterface.Controller):
         st = self.poly.installprofile()
         return st
 
+    def bed_in_out(self, user_id, device_id, appli):
+        parent_address = user_id.replace('0', '')[-3:]
+        node_address = parent_address + device_id[-3:].lower()
+        if appli == "50":
+            # control.nodes[node_address].setDriver('GV16', 1)
+            self.nodes[node_address].setDriver('GV16', 1)
+        if appli == "51":
+            # control.nodes[node_address].setDriver('GV16', 0)
+            self.nodes[node_address].setDriver('GV16', 0)
+
     id = 'controller'
     commands = {
         'QUERY': query,
@@ -578,12 +588,15 @@ class CallBackServer(BaseHTTPRequestHandler):
                     print("Appli: " + params['appli'])
                     appli = params['deviceid']
 
-                    parent_address = user_id.replace('0', '')[-3:]
-                    node_address = parent_address + device_id[-3:].lower()
-                    if appli == "50":
-                        control.nodes[node_address].setDriver('GV16', 1)
-                    if appli == "51":
-                        control.nodes[node_address].setDriver('GV16', 0)
+                    control.bed_in_out(user_id, device_id, appli)
+                    #
+                    # parent_address = user_id.replace('0', '')[-3:]
+                    # node_address = parent_address + device_id[-3:].lower()
+                    # if appli == "50":
+                    #     control.nodes[node_address].setDriver('GV16', 1)
+                    #
+                    # if appli == "51":
+                    #     control.nodes[node_address].setDriver('GV16', 0)
 
         # custom_data = control.polyConfig['customData']
         # for user_id in custom_data.keys():
