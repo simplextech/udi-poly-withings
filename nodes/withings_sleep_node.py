@@ -114,6 +114,7 @@ class WithingsSleepNode(polyinterface.Node):
     GV13:   Breathing Disturbances Intensity
     GV14:   Snoring (seconds)
     GV15:   Snoring Episodes
+    GV16:   In Bed
     '''
 
     drivers = [{'driver': 'ST', 'value': 0, 'uom': 56},
@@ -132,7 +133,8 @@ class WithingsSleepNode(polyinterface.Node):
                {'driver': 'GV12', 'value': 0, 'uom': 56},
                {'driver': 'GV13', 'value': 0, 'uom': 25},
                {'driver': 'GV14', 'value': 0, 'uom': 56},
-               {'driver': 'GV15', 'value': 0, 'uom': 56}
+               {'driver': 'GV15', 'value': 0, 'uom': 56},
+               {'driver': 'GV16', 'value': 0, 'uom': 2}
                ]
 
     commands = {

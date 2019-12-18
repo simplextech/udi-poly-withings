@@ -145,3 +145,4 @@ ST-SLEEP-GV12-NAME = RR Max
 ST-SLEEP-GV13-NAME = Breathing Disturbance Intensity
 ST-SLEEP-GV14-NAME = Snoring Duration
 ST-SLEEP-GV15-NAME = Snoring Episodes
+ST-SLEEP-GV16-NAME = In Bed
