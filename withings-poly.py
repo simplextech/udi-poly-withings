@@ -525,6 +525,11 @@ class Controller(polyinterface.Controller):
 class CallBackServer(BaseHTTPRequestHandler):
     LOGGER.info('Starting CallBack Server')
 
+    def _set_response(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+
     def do_GET(self):
         self.send_response(200)
         self.end_headers()
@@ -537,9 +542,11 @@ class CallBackServer(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length)  # <--- Gets the data itself
         LOGGER.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
                      str(self.path), str(self.headers), post_data.decode('utf-8'))
+        params = dict([p.split('=') for p in post_data.decode('utf-8').split('&')])
+        print(params)
 
         self._set_response()
-        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+        # self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
         #
         # content_length = int(self.headers['Content-Length'])
         # body = self.rfile.read(content_length)
