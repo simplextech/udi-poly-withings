@@ -432,7 +432,7 @@ class Controller(polyinterface.Controller):
         return st
 
     def callback(self, user_id, device_id, appli):
-        LOGGER.debug("Running bed_in_out")
+        LOGGER.debug("Running Callback")
 
         parent_address = user_id.replace('0', '')[-3:]
         node_address = parent_address + device_id[-3:].lower()
