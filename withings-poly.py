@@ -487,7 +487,7 @@ class Controller(polyinterface.Controller):
         st = self.poly.installprofile()
         return st
 
-    def bed_in_out(self, user_id, device_id, appli):
+    def callback(self, user_id, device_id, appli):
         LOGGER.debug("Running bed_in_out")
 
         parent_address = user_id.replace('0', '')[-3:]
@@ -550,67 +550,21 @@ class CallBackServer(BaseHTTPRequestHandler):
         self._set_response()
 
     def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        # self.wfile.write(b'Hello, world!')
-        LOGGER.info("=============== CallBack Server Test Line ======================")
-        print(self.raw_requestline)
+        self._set_response()
 
     def do_POST(self):
-        content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
-        raw_post_data = self.rfile.read(content_length)  # <--- Gets the data itself
-
-
-        print("-----Requests-----")
-        # print(self.path)
-        # data = str(post_data)
-        # print("Post Data: " + raw_post_data.decode('utf-8'))
-        # post_data = urllib.parse.parse_qs(raw_post_data.decode('utf-8'))
-        # print(post_data)
+        content_length = int(self.headers['Content-Length'])
+        raw_post_data = self.rfile.read(content_length)
         params = dict([p.split('=') for p in raw_post_data.decode('utf-8').split('&')])
-        print(params)
-
-        # for i in post_data:
-        #     print(i)
-        #
-        # for i in params:
-        #     print(i)
-
         self._set_response()
-        # date=1576708199&deviceid=a2c97dec4d1b2e48ff1b3367728d45d727342eb9&appli=50&userid=18418009
 
-        # user_id = ""
-        # device_id = ""
-        # appli = ""
         if 'userid' in params:
-            print("User ID: " + params['userid'])
             user_id = params['userid']
             if 'deviceid' in params:
-                print("Device ID: " + params['deviceid'])
                 device_id = params['deviceid']
                 if 'appli' in params:
-                    print("Appli: " + params['appli'])
                     appli = params['appli']
-
-                    control.bed_in_out(user_id, device_id, appli)
-
-                    #
-                    # parent_address = user_id.replace('0', '')[-3:]
-                    # node_address = parent_address + device_id[-3:].lower()
-                    # if appli == "50":
-                    #     control.nodes[node_address].setDriver('GV16', 1)
-                    #
-                    # if appli == "51":
-                    #     control.nodes[node_address].setDriver('GV16', 0)
-
-        # custom_data = control.polyConfig['customData']
-        # for user_id in custom_data.keys():
-        #     parent_address = str(user_id).replace('0', '')[-3:]
-        #     node_address = parent_address + device_id[-3:].lower()
-        #     if appli == "50":
-        #         control.nodes[node_address].setDriver('GV16', 1)
-        #     if appli == "51":
-        #         control.nodes[node_address].setDriver('GV16', 0)
+                    control.callback(user_id, device_id, appli)
 
 
 if __name__ == "__main__":
