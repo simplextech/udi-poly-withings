@@ -160,7 +160,6 @@ class Controller(polyinterface.Controller):
             print(oauth)
 
     def get_token(self, code):
-        # _state = False
         _token_url = "https://account.withings.com/oauth2/token"
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         payload = {"grant_type": "authorization_code",
@@ -187,19 +186,12 @@ class Controller(polyinterface.Controller):
                     self.saveCustomData(custom_data)
                     time.sleep(2)
                     self.discover()
-                    # _state = True
                 except KeyError as ex:
                     LOGGER.error("get_token Error: " + str(ex))
             else:
                 return False
         except requests.exceptions.RequestException as e:
             LOGGER.error("Error: " + str(e))
-
-        # if _state:
-        #     LOGGER.debug("---------------Get Token Complete -----------------------")
-        #     self.discover()
-        # else:
-        #     return False
 
     def refresh_token(self):
         _state = False
