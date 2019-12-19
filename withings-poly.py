@@ -494,8 +494,10 @@ class Controller(polyinterface.Controller):
         node_address = parent_address + device_id[-3:].lower()
         print("Node address: " + node_address)
         if appli == "50" or appli == 50:
+            print("In Bed")
             self.nodes[node_address].setDriver('GV16', 1)
         if appli == "51" or appli == 51:
+            print("Out of Bed")
             self.nodes[node_address].setDriver('GV16', 0)
 
     id = 'controller'
