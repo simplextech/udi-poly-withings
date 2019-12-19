@@ -160,7 +160,6 @@ class Controller(polyinterface.Controller):
             print(oauth)
 
     def get_token(self, code):
-        # _state = False
         _token_url = "https://account.withings.com/oauth2/token"
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         payload = {"grant_type": "authorization_code",
@@ -186,20 +185,13 @@ class Controller(polyinterface.Controller):
 
                     self.saveCustomData(custom_data)
                     time.sleep(2)
-                    self.discoer()
-                    # _state = True
+                    self.discover()
                 except KeyError as ex:
                     LOGGER.error("get_token Error: " + str(ex))
             else:
                 return False
         except requests.exceptions.RequestException as e:
             LOGGER.error("Error: " + str(e))
-
-        # if _state:
-        #     LOGGER.debug("---------------Get Token Complete -----------------------")
-        #     self.discover()
-        # else:
-        #     return False
 
     def refresh_token(self):
         _state = False
@@ -228,6 +220,8 @@ class Controller(polyinterface.Controller):
                                             'expires_in': expires_in,
                                             'user_id': _user_id}
 
+                    self.saveCustomData(custom_data)
+                    time.sleep(2)
                     _state = True
                 else:
                     _state = False
@@ -235,7 +229,7 @@ class Controller(polyinterface.Controller):
                 LOGGER.error("Error: " + str(e))
 
         if _state:
-            self.saveCustomData(custom_data)
+            # self.saveCustomData(custom_data)
             time.sleep(3)
             return True
         else:
@@ -252,7 +246,6 @@ class Controller(polyinterface.Controller):
 
     def query(self, command=None):
         self.withings_update()
-        # self.check_params()
         # for node in self.nodes:
         #     self.nodes[node].reportDrivers()
 
@@ -461,11 +454,9 @@ class CallBackServer(BaseHTTPRequestHandler):
 
     def do_HEAD(self):
         self._set_response()
-        self.wfile.write("<html><body>Received</body></html>")
 
     def do_GET(self):
         self._set_response()
-        self.wfile.write("<html><body>Received</body></html>")
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
