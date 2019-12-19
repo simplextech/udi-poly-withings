@@ -179,50 +179,41 @@ class Controller(polyinterface.Controller):
                     refresh_token = resp['refresh_token']
                     expires_in = resp['expires_in']
                     user_id = resp['userid']
-
-                    # print("------------ NEW USER: " + str(user_id) + " ----------------")
                     custom_data[user_id] = {'access_token': access_token,
                                             'refresh_token': refresh_token,
                                             'expires_in': expires_in,
                                             'user_id': user_id}
 
-                    # print("Get Token End----------------------------------")
-                    # print(custom_data)
-                    # print("Get Token End----------------------------------")
-
                     self.saveCustomData(custom_data)
-                    _state = True
-                    return True
+                    time.sleep(2)
+                    self.discoer()
+                    # _state = True
                 except KeyError as ex:
                     LOGGER.error("get_token Error: " + str(ex))
             else:
-                _state = False
                 return False
         except requests.exceptions.RequestException as e:
             LOGGER.error("Error: " + str(e))
 
-        if _state:
-            LOGGER.debug("---------------Get Token Complete -----------------------")
-            self.discover()
-        else:
-            return False
+        # if _state:
+        #     LOGGER.debug("---------------Get Token Complete -----------------------")
+        #     self.discover()
+        # else:
+        #     return False
 
     def refresh_token(self):
-        _state = None
+        _state = False
         _token_url = "https://account.withings.com/oauth2/token"
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-
         custom_data = copy.deepcopy(self.polyConfig['customData'])
-        # print("---------------------------- refresh_token ----------------------------")
 
         for user_id in custom_data.keys():
-            # print("----refresh token-------- USER: " + str(user_id) + " ----------------")
             payload = {"grant_type": "refresh_token",
                        "client_id": self.server_data['clientId'],
                        "client_secret": self.server_data['clientSecret'],
                        "refresh_token": custom_data[user_id]['refresh_token']
                        }
-            # print("---refresh token ----- " + custom_data[user_id]['refresh_token'])
+
             try:
                 r = requests.post(_token_url, headers=headers, data=payload)
                 if r.status_code == requests.codes.ok:
