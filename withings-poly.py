@@ -220,6 +220,8 @@ class Controller(polyinterface.Controller):
                                             'expires_in': expires_in,
                                             'user_id': _user_id}
 
+                    self.saveCustomData(custom_data)
+                    time.sleep(2)
                     _state = True
                 else:
                     _state = False
@@ -227,7 +229,7 @@ class Controller(polyinterface.Controller):
                 LOGGER.error("Error: " + str(e))
 
         if _state:
-            self.saveCustomData(custom_data)
+            # self.saveCustomData(custom_data)
             time.sleep(3)
             return True
         else:
