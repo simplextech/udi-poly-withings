@@ -8,19 +8,11 @@ import sys
 import time
 import requests
 import re
-# from flask import Flask
-# from flask import Response
-# import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qsl
-import urllib
 from withings import Withings
 import copy
-# from nodes import WithingsParentNode
-# from nodes import WithingsDeviceNode
 from nodes import *
-# from nodes.withings_scale_node import WithingsScaleHRNode
-import utils
+
 
 LOGGER = polyinterface.LOGGER
 
@@ -77,24 +69,14 @@ class Controller(polyinterface.Controller):
         # This grabs the server.json data and checks profile_version is up to date
         # serverdata = self.poly.get_server_data()
         # LOGGER.info('Started Template NodeServer {}'.format(serverdata['version']))
-        # self.check_params()
-        # self.discover()
         # self.poly.add_custom_config_docs("<b>And this is some custom config data</b>")
-        # callback_server = threading.Thread(name='Callback Server', target=self.flask_server)
-        # callback_server.setDaemon(True)
-        # callback_server.start()
 
-        print("-----------------------------------")
-        print("httpsIngress: " + str(self.poly.init['netInfo']['httpsIngress']))
-        print("publicIp: " + self.poly.init['netInfo']['publicIp'])
-        print("-----------------------------------")
+        LOGGER.debug("-----------------------------------")
+        LOGGER.debug("httpsIngress: " + str(self.poly.init['netInfo']['httpsIngress']))
+        LOGGER.debug("publicIp: " + self.poly.init['netInfo']['publicIp'])
+        LOGGER.debug("-----------------------------------")
         self.ingress = self.poly.init['netInfo']['httpsIngress']
-        # httpd = HTTPServer(('0.0.0.0', 3000), CallBackServer)
-        # httpd.serve_forever()
 
-        # cb_server = threading.Thread(name='Callback Server', target=CallBackServer.flask_server())
-        # cb_server.setDaemon(True)
-        # cb_server.start()
         if self.get_credentials():
             self.auth_prompt()
             if self.refresh_token():
@@ -103,26 +85,6 @@ class Controller(polyinterface.Controller):
                 self.auth_prompt()
         else:
             LOGGER.error("Credentials for OAuth are not available")
-
-    # def flask_server(self):
-    #     print("-----------------------------------")
-    #     print("httpsIngress: " + str(self.poly.init['netInfo']['httpsIngress']))
-    #     print("publicIp: " + self.poly.init['netInfo']['publicIp'])
-    #     print("-----------------------------------")
-    #     httpsIngress = self.poly.init['netInfo']['httpsIngress']
-    #     publicIp = self.poly.init['netInfo']['publicIp']
-    #
-    #     app = Flask(__name__)
-    #
-    #     @app.route("/test")
-    #     def hello():
-    #         print("----------------- Hello World ------------------")
-    #         return Response("{'a':'b'}", status=200, mimetype='application/json')
-    #
-    #     app.run(debug=True, use_reloader=False, host="0.0.0.0", port=3000)
-    #     # app.run(host="0.0.0.0", port=3000)
-    #     # app.debug = False
-    #     # threading.Thread(target=app.run(host="0.0.0.0", port=3000)).start()
 
     def get_credentials(self):
         LOGGER.debug('---- Environment: ' + self.poly.stage + ' ----')
@@ -492,50 +454,19 @@ class Controller(polyinterface.Controller):
 
         parent_address = user_id.replace('0', '')[-3:]
         node_address = parent_address + device_id[-3:].lower()
-        print("Node address: " + node_address)
 
-        if appli == "50" or appli == 50:
-            print("In Bed")
+        if appli == "50":
             self.nodes[node_address].setDriver('GV16', 1)
-        if appli == "51" or appli == 51:
-            print("Out of Bed")
+        if appli == "51":
             self.nodes[node_address].setDriver('GV16', 0)
 
     id = 'controller'
     commands = {
         'QUERY': query,
         'DISCOVER': discover,
-        'UPDATE_PROFILE': update_profile,
-        # 'REMOVE_NOTICES_ALL': remove_notices_all,
-        # 'REMOVE_NOTICE_TEST': remove_notice_test
+        'UPDATE_PROFILE': update_profile
     }
     drivers = [{'driver': 'ST', 'value': 1, 'uom': 2}]
-
-
-#
-# class CallBackServer:
-#     def __init__(self):
-#         pass
-#
-#     def flask_server(self):
-#         # print("-----------------------------------")
-#         # print("httpsIngress: " + str(self.poly.init['netInfo']['httpsIngress']))
-#         # print("publicIp: " + self.poly.init['netInfo']['publicIp'])
-#         # print("-----------------------------------")
-#         # httpsIngress = self.poly.init['netInfo']['httpsIngress']
-#         # publicIp = self.poly.init['netInfo']['publicIp']
-#
-#         app = Flask(__name__)
-#
-#         @app.route("/test")
-#         def hello():
-#             print("----------------- Hello World ------------------")
-#             return Response("{'a':'b'}", status=200, mimetype='application/json')
-#
-#         app.run(debug=True, use_reloader=False, host="0.0.0.0", port=3000)
-#         # app.run(host="0.0.0.0", port=3000)
-#         # app.debug = False
-#         # threading.Thread(target=app.run(host="0.0.0.0", port=3000)).start()
 
 
 class CallBackServer(BaseHTTPRequestHandler):

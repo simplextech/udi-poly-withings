@@ -91,7 +91,6 @@ class Withings:
 
     def subscribe_bed_in(self):
         url = "https://wbsapi.withings.net/notify"
-        # callbackurl = self.poly.init['netInfo']['httpsIngress']
         callbackurl = self.ingress
         payload = {"action": "subscribe", "appli": "50", "callbackurl": callbackurl}
 
@@ -104,7 +103,6 @@ class Withings:
 
     def subscribe_bed_out(self):
         url = "https://wbsapi.withings.net/notify"
-        # callbackurl = self.poly.init['netInfo']['httpsIngress']
         callbackurl = self.ingress
         payload = {"action": "subscribe", "appli": "51", "callbackurl": callbackurl}
 
