@@ -4,7 +4,7 @@
     "type": "python3",
     "executable": "withings-poly.py",
     "install_cloud": "install_cloud.sh",
-    "description": "DO NOT INSTALL IN DEVELOPMENT: Withings Healthmate Nodeserver",
+    "description": "DO NOT INSTALL IN DEVELOPMENT: Withings Integration Nodeserver",
     "notice": "Under Development do not use",
     "shortPoll": "600",
     "longPoll": "3600",
@@ -13,7 +13,7 @@
     "httpsIngress": true,
     "credits": [
         {
-            "title": "Withings Healthmate integration Nodeserver",
+            "title": "Withings integration Nodeserver",
             "author": "Simplex Technology",
             "version": "0.0.1",
             "date": "December 4, 2019",
