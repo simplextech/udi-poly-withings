@@ -493,6 +493,7 @@ class Controller(polyinterface.Controller):
         parent_address = user_id.replace('0', '')[-3:]
         node_address = parent_address + device_id[-3:].lower()
         print("Node address: " + node_address)
+
         if appli == "50" or appli == 50:
             print("In Bed")
             self.nodes[node_address].setDriver('GV16', 1)
@@ -589,7 +590,7 @@ class CallBackServer(BaseHTTPRequestHandler):
                 device_id = params['deviceid']
                 if 'appli' in params:
                     print("Appli: " + params['appli'])
-                    appli = params['deviceid']
+                    appli = params['appli']
 
                     control.bed_in_out(user_id, device_id, appli)
 
