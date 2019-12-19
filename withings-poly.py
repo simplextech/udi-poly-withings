@@ -461,11 +461,9 @@ class CallBackServer(BaseHTTPRequestHandler):
 
     def do_HEAD(self):
         self._set_response()
-        # self.wfile.write("<html><body>Received</body></html>")
 
     def do_GET(self):
         self._set_response()
-        # self.wfile.write("<html><body>Received</body></html>")
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
