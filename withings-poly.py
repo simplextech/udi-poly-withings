@@ -160,22 +160,15 @@ class Controller(polyinterface.Controller):
             print(oauth)
 
     def get_token(self, code):
-        _state = None
-
+        # _state = False
         _token_url = "https://account.withings.com/oauth2/token"
-
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-
         payload = {"grant_type": "authorization_code",
                    "code": code,
                    "client_id": self.server_data['clientId'],
                    "client_secret": self.server_data['clientSecret'],
                    "redirect_uri": self.server_data['url']}
-
-        # print("Get Token Begin----------------------------------")
         custom_data = copy.deepcopy(self.polyConfig['customData'])
-        # print(custom_data)
-        # print("Get Token Begin----------------------------------")
 
         try:
             r = requests.post(_token_url, headers=headers, data=payload)
