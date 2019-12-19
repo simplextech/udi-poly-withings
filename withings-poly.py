@@ -69,7 +69,7 @@ class Controller(polyinterface.Controller):
         # This grabs the server.json data and checks profile_version is up to date
         # serverdata = self.poly.get_server_data()
         # LOGGER.info('Started Template NodeServer {}'.format(serverdata['version']))
-        # self.poly.add_custom_config_docs("<b>And this is some custom config data</b>")
+        self.poly.add_custom_config_docs("<b>And this is some custom config data</b>")
 
         LOGGER.debug("-----------------------------------")
         LOGGER.debug("httpsIngress: " + str(self.poly.init['netInfo']['httpsIngress']))
