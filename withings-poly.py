@@ -186,7 +186,7 @@ class Controller(polyinterface.Controller):
 
                     self.saveCustomData(custom_data)
                     time.sleep(2)
-                    self.discoer()
+                    self.discover()
                     # _state = True
                 except KeyError as ex:
                     LOGGER.error("get_token Error: " + str(ex))
