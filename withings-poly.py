@@ -235,8 +235,6 @@ class Controller(polyinterface.Controller):
                 LOGGER.error("Error: " + str(e))
 
         if _state:
-            # print("---------------refresh  New Custom Data -----------------------")
-            # print(custom_data)
             self.saveCustomData(custom_data)
             time.sleep(3)
             return True
