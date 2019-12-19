@@ -246,7 +246,6 @@ class Controller(polyinterface.Controller):
 
     def query(self, command=None):
         self.withings_update()
-        # self.check_params()
         # for node in self.nodes:
         #     self.nodes[node].reportDrivers()
 
