@@ -134,7 +134,7 @@ class WithingsSleepNode(polyinterface.Node):
                {'driver': 'GV13', 'value': 0, 'uom': 25},
                {'driver': 'GV14', 'value': 0, 'uom': 56},
                {'driver': 'GV15', 'value': 0, 'uom': 56},
-               {'driver': 'GV16', 'value': 0, 'uom': 2}
+               {'driver': 'GV16', 'value': 0, 'uom': 95}
                ]
 
     commands = {
