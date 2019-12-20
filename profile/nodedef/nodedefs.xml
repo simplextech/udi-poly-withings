@@ -18,17 +18,17 @@
         </cmds>
     </nodeDef>
 
-    <!-- WITHINGS_NODE -->
-    <nodeDef id="WITHINGS_NODE" nls="WITHINGS">
-        <editors />
-        <sts>
-            <st id="ST" editor="I_BATTERY" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    &lt;!&ndash; WITHINGS_NODE &ndash;&gt;-->
+<!--    <nodeDef id="WITHINGS_NODE" nls="WITHINGS">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="I_BATTERY" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
     <!-- PARENT_NODE -->
     <nodeDef id="PARENT_NODE" nls="PARENT">
@@ -42,383 +42,383 @@
         </cmds>
     </nodeDef>
 
-    <!-- MEASURE_NODE -->
-    <nodeDef id="MEASURE_NODE" nls="MEASURE">
-        <editors />
-        <sts>
-            <st id="ST" editor="bool" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    &lt;!&ndash; MEASURE_NODE &ndash;&gt;-->
+<!--    <nodeDef id="MEASURE_NODE" nls="MEASURE">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="bool" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <!-- ACTIVITY_NODE -->
-    <nodeDef id="ACTIVITY_NODE" nls="ACTIVITY">
-        <editors />
-        <sts>
-            <st id="ST" editor="bool" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    &lt;!&ndash; ACTIVITY_NODE &ndash;&gt;-->
+<!--    <nodeDef id="ACTIVITY_NODE" nls="ACTIVITY">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="bool" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
 
 
-    <nodeDef id="WITHINGS_ACTIVE" nls="ACTIVE">
-        <editors />
-        <sts>
-            <st id="ST" editor="_45_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_ACTIVE" nls="ACTIVE">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_45_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_BODYTEMP" nls="BODYTEMP">
-        <editors />
-        <sts>
-            <st id="ST" editor="_17_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_BODYTEMP" nls="BODYTEMP">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_17_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_BONEMASS" nls="BONEMASS">
-        <editors />
-        <sts>
-            <st id="ST" editor="_52_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_BONEMASS" nls="BONEMASS">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_52_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_CALORIES" nls="CALORIES">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_CALORIES" nls="CALORIES">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_DIASTOLIC" nls="DIASTOLIC">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_DIASTOLIC" nls="DIASTOLIC">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_DISTANCE" nls="DISTANCE">
-        <editors />
-        <sts>
-            <st id="ST" editor="_116_2" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_DISTANCE" nls="DISTANCE">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_116_2" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_ELEVATION" nls="ELEVATION">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_ELEVATION" nls="ELEVATION">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_FATFREE" nls="FATFREE">
-        <editors />
-        <sts>
-            <st id="ST" editor="_52_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_FATFREE" nls="FATFREE">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_52_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_FATMASS" nls="FATMASS">
-        <editors />
-        <sts>
-            <st id="ST" editor="_52_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_FATMASS" nls="FATMASS">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_52_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_FATRATIO" nls="FATRATIO">
-        <editors />
-        <sts>
-            <st id="ST" editor="_51_2" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_FATRATIO" nls="FATRATIO">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_51_2" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_HEIGHT" nls="HEIGHT">
-        <editors />
-        <sts>
-            <st id="ST" editor="_18_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_HEIGHT" nls="HEIGHT">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_18_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_HRAVERAGE" nls="HRAVERAGE">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_HRAVERAGE" nls="HRAVERAGE">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_HRMAX" nls="HRMAX">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_HRMAX" nls="HRMAX">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_HRMIN" nls="HRMIN">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_HRMIN" nls="HRMIN">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_HRZONE0" nls="HRZONE0">
-        <editors />
-        <sts>
-            <st id="ST" editor="_45_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_HRZONE0" nls="HRZONE0">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_45_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_HRZONE1" nls="HRZONE1">
-        <editors />
-        <sts>
-            <st id="ST" editor="_45_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_HRZONE1" nls="HRZONE1">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_45_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_HRZONE2" nls="HRZONE2">
-        <editors />
-        <sts>
-            <st id="ST" editor="_45_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_HRZONE2" nls="HRZONE2">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_45_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_HRZONE3" nls="HRZONE3">
-        <editors />
-        <sts>
-            <st id="ST" editor="_45_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_HRZONE3" nls="HRZONE3">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_45_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_HYDRATION" nls="HYDRATION">
-        <editors />
-        <sts>
-            <st id="ST" editor="_52_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_HYDRATION" nls="HYDRATION">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_52_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_INTENSE" nls="INTENSE">
-        <editors />
-        <sts>
-            <st id="ST" editor="_45_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_INTENSE" nls="INTENSE">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_45_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_MODERATE" nls="MODERATE">
-        <editors />
-        <sts>
-            <st id="ST" editor="_45_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_MODERATE" nls="MODERATE">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_45_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_MUSCLEMASS" nls="MUSCLEMASS">
-        <editors />
-        <sts>
-            <st id="ST" editor="_52_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_MUSCLEMASS" nls="MUSCLEMASS">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_52_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_PULSE" nls="PULSE">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_PULSE" nls="PULSE">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_PWV" nls="PWV">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_0" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_PWV" nls="PWV">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_0" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_SKINTEMP" nls="SKINTEMP">
-        <editors />
-        <sts>
-            <st id="ST" editor="_17_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_SKINTEMP" nls="SKINTEMP">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_17_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_SOFT" nls="SOFT">
-        <editors />
-        <sts>
-            <st id="ST" editor="_45_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_SOFT" nls="SOFT">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_45_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_SP02" nls="SP02">
-        <editors />
-        <sts>
-            <st id="ST" editor="_51_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_SP02" nls="SP02">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_51_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_STEPS" nls="STEPS">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_STEPS" nls="STEPS">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_SYSTOLIC" nls="SYSTOLIC">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_SYSTOLIC" nls="SYSTOLIC">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_TEMP" nls="TEMP">
-        <editors />
-        <sts>
-            <st id="ST" editor="_17_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_TEMP" nls="TEMP">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_17_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_TOTALCALORIES" nls="TOTALCALORIES">
-        <editors />
-        <sts>
-            <st id="ST" editor="_56_2" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_TOTALCALORIES" nls="TOTALCALORIES">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_56_2" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
-    <nodeDef id="WITHINGS_WEIGHT" nls="WEIGHT">
-        <editors />
-        <sts>
-            <st id="ST" editor="_52_1" />
-        </sts>
-        <cmds>
-            <sends />
-            <accepts />
-        </cmds>
-    </nodeDef>
+<!--    <nodeDef id="WITHINGS_WEIGHT" nls="WEIGHT">-->
+<!--        <editors />-->
+<!--        <sts>-->
+<!--            <st id="ST" editor="_52_1" />-->
+<!--        </sts>-->
+<!--        <cmds>-->
+<!--            <sends />-->
+<!--            <accepts />-->
+<!--        </cmds>-->
+<!--    </nodeDef>-->
 
 <!--    Consolidated Nodes-->
     <nodeDef id="WITHINGS_SCALE" nls="SCALE">
@@ -564,7 +564,7 @@
             <st id="GV13" editor="I_BREATHING" />          <!-- Breathing Disturbances Intensity -->
             <st id="GV14" editor="_45_1" />          <!-- Snoring -->
             <st id="GV15" editor="_56_1" />          <!-- Snoring Episodes -->
-            <st id="GV16" editor="_2_0" />          <!-- Snoring Episodes -->
+            <st id="GV16" editor="_95_0" />          <!-- In/Out of Bed -->
         </sts>
         <cmds>
             <sends />
