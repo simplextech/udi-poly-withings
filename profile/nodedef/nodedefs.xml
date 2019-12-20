@@ -174,7 +174,7 @@
             <st id="GV13" editor="I_BREATHING" />          <!-- Breathing Disturbances Intensity -->
             <st id="GV14" editor="_45_1" />          <!-- Snoring -->
             <st id="GV15" editor="_56_1" />          <!-- Snoring Episodes -->
-            <st id="GV16" editor="_95_0" />          <!-- In/Out of Bed -->
+            <st id="GV16" editor="I_INBED" />          <!-- In/Out of Bed -->
         </sts>
         <cmds>
             <sends />
