@@ -426,9 +426,9 @@ class Controller(polyinterface.Controller):
         node_address = parent_address + device_id[-3:].lower()
 
         if appli == "50":
-            self.nodes[node_address].setDriver('GV16', 1)
+            self.nodes[node_address].setDriver('GV16', 3)
         if appli == "51":
-            self.nodes[node_address].setDriver('GV16', 0)
+            self.nodes[node_address].setDriver('GV16', 1)
 
     id = 'controller'
     commands = {
