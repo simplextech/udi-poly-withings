@@ -146,11 +146,7 @@ class Controller(polyinterface.Controller):
     def oauth(self, oauth):
         LOGGER.info('OAUTH Received: {}'.format(oauth))
         if 'code' in oauth:
-            if self.get_token(oauth['code']):
-                LOGGER.info("Withings OAuth Successful")
-                # self.discover()
-            else:
-                LOGGER.warn("Withings OAuth Failed")
+            self.get_token(oauth['code'])
         else:
             print(oauth)
 
