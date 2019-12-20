@@ -9,13 +9,13 @@
     "shortPoll": "600",
     "longPoll": "3600",
     "testMode": true,
-    "profile_version": "0.0.3",
+    "profile_version": "0.0.4",
     "httpsIngress": true,
     "credits": [
         {
             "title": "Withings integration Nodeserver",
             "author": "Simplex Technology",
-            "version": "0.0.3",
+            "version": "0.0.4",
             "date": "December 4, 2019",
             "source": "https://github.com/simplextech/udi-poly-withings",
             "license": "https://github.com/simplextech/udi-poly-withings/blob/master/LICENSE"

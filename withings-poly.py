@@ -228,12 +228,13 @@ class Controller(polyinterface.Controller):
 
     def shortPoll(self):
         if self.disco != 0:
-            LOGGER.debug('shortPoll')
+            # LOGGER.debug('shortPoll')
             self.withings_update()
 
     def longPoll(self):
-        LOGGER.debug('longPoll')
-        self.refresh_token()
+        if self.disco != 0:
+            # LOGGER.debug('longPoll')
+            self.refresh_token()
 
     def query(self, command=None):
         self.withings_update()
@@ -332,7 +333,7 @@ class Controller(polyinterface.Controller):
         custom_data = self.polyConfig['customData']
         for user_id in custom_data.keys():
             access_token = custom_data[user_id]['access_token']
-            print(user_id, access_token)
+            # print(user_id, access_token)
             withings = Withings(access_token, self.ingress)
             devices = withings.get_devices()
             measures = withings.get_measure()
@@ -346,12 +347,12 @@ class Controller(polyinterface.Controller):
                     node_address = self.nodes[node].address
                     re_result = re.match(pattern, node_address)
                     if re_result:
-                        print("Node: " + self.nodes[node].address)
+                        # print("Node: " + self.nodes[node].address)
                         self.nodes[node].query(command=[devices, measures, activities, sleep])
                     else:
                         pass
                     time.sleep(2)
-            print("Updated: " + str(user_id))
+            # print("Updated: " + str(user_id))
             time.sleep(3)
 
     def delete(self):
