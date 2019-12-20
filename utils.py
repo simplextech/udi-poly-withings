@@ -33,29 +33,3 @@ def meters_to_mile(meters):
 def kilogram_to_pound(kilogram):
     lb = round(kilogram * 2.2046, 1)
     return lb
-
-
-# def json_to_normal(val):
-#     norm = round(val, 2)
-#     return norm
-
-
-
-
-# def kilogram_to_pound_weight(kilogram):
-#     lb = round(kilogram * 2.2046, 2)
-#     return lb
-#
-#
-# def kilogram_to_pound_mass(kilogram):
-#     lb = round(kilogram * 2.2046, 2)
-#     return lb
-
-
-
-
-
-# def beats_per_minute(beats):
-#     bpm = float(beats) / 60
-#     return bpm
-
