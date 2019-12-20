@@ -17,7 +17,7 @@
             </accepts>
         </cmds>
     </nodeDef>
-    
+
     <!-- PARENT_NODE -->
     <nodeDef id="PARENT_NODE" nls="PARENT">
         <editors />
