@@ -8,7 +8,7 @@
     "notice": "Beta: Not meant for health diagnostics, treatment or care.  No liability is assumed or implied",
     "shortPoll": "600",
     "longPoll": "3600",
-    "testMode": true,
+    "testMode": false,
     "profile_version": "0.1.4",
     "httpsIngress": true,
     "credits": [
